@@ -4,7 +4,7 @@
 #
 #################################################################################
 
-PROJECT_NAME = de-currency-exchange
+PROJECT_NAME = totes_awesome
 REGION = eu-west-2
 PYTHON_INTERPRETER = python
 WD=$(shell pwd)
