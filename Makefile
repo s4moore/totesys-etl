@@ -37,6 +37,7 @@ endef
 ## Build the environment requirements
 requirements: create-environment
 	$(call execute_in_env, $(PIP) install -r ./requirements.txt)
+	$(call execute_in_env, $(PIP) install -r ./requirements.txt -t dependencies/python)
 
 ################################################################################################################
 # Set Up
@@ -77,7 +78,7 @@ run-black:
 
 ## Run the unit tests
 unit-test:
-	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest -v)
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest test/ -v)
 
 ## Run the coverage check
 check-coverage:
