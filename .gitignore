@@ -16,4 +16,4 @@ venv/
 **/*.tfstate*
 dependencies/
 packages/
-
+**/__pycache*
