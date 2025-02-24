@@ -46,6 +46,10 @@ requirements: create-environment
 black:
 	$(call execute_in_env, $(PIP) install black)
 
+## Install flake8
+flake8:
+	$(call execute_in_env, $(PIP) install flake8)
+
 ## Install coverage
 coverage:
 	$(call execute_in_env, $(PIP) install coverage)
