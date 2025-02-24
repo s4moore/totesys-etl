@@ -37,7 +37,6 @@ endef
 ## Build the environment requirements
 requirements: create-environment
 	$(call execute_in_env, $(PIP) install -r ./requirements.txt)
-	$(call execute_in_env, $(PIP) install -r ./requirements.txt -t dependencies/python)
 
 ################################################################################################################
 # Set Up
@@ -62,7 +61,7 @@ dev-setup: black flake8 coverage
 
 ## Run flake8
 run-flake8:
-	$(call execute_in_env, black  ./src/*.py ./test/*.py)
+	$(call execute_in_env, flake8  ./src/*.py ./test/*.py)
 
 ## Run the black code check
 run-black:
@@ -74,7 +73,7 @@ unit-test:
 
 ## Run the coverage check
 check-coverage:
-	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest --cov=src tests/)
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest --cov=src test/)
 
 ## Run all checks
-run-checks: run-black unit-test check-coverage
+run-checks: run-black run-flake8 unit-test check-coverage
