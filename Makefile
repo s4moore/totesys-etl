@@ -53,11 +53,16 @@ flake8:
 ## Install coverage
 coverage:
 	$(call execute_in_env, $(PIP) install coverage)
+	$(call execute_in_env, $(PIP) install pytest-cov)
 
 ## Set up dev requirements (bandit, black)
-dev-setup: black coverage
+dev-setup: black flake8 coverage
 
 # Build / Run
+
+## Run flake8
+run-flake8:
+	$(call execute_in_env, black  ./src/*.py ./test/*.py)
 
 ## Run the black code check
 run-black:
