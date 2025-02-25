@@ -35,7 +35,6 @@ def test_get_credentials_returns_secret_when_present(aws_credentials):
 
 def test_get_credentials_raises_error_when_secret_not_found(aws_credentials):
     with mock_aws():
-        smclient = client('secretsmanager')
         test_name = 'MySuperSecret'
         with pytest.raises(ClientError):
             get_credentials(test_name)
