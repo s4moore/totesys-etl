@@ -1,5 +1,5 @@
 resource "aws_cloudwatch_log_group" "totes404TerraformGroup" {
-    name = "/aws/lambda/${aws_lambda_function.<lambda-name-handler>.function_name}"
+    name = "/aws/lambda/${module.lambda_function.lambda_function_name}-testing-2"
   
 }
 resource "aws_cloudwatch_metric_alarm" "error_raise" {
@@ -14,7 +14,7 @@ resource "aws_cloudwatch_metric_alarm" "error_raise" {
 
     alarm_description = "No new data to pull"
     actions_enabled = true
-    alarm_actions = [ aws_sns_topic.<sns-name>.arn ]
+    alarm_actions = [ aws_sns_topic.injest_lambda.arn ]
 
 }
 

@@ -11,13 +11,13 @@ module "secrets_manager" {
   source = "terraform-aws-modules/secrets-manager/aws"
 
   # Secret
-  name        = "totesys"
+  name        = "totesys-testing-2"
   description = "Totesys database credentials"
-  secret_string = jsonencode({ "cohort_id" : var.cohort_id,
-    "user" : var.user,
-    "password" : var.password,
-    "host" : var.host,
-    "database" : var.database,
+  secret_string = jsonencode({ "cohort_id" : "${var.cohort_id}",
+    "user" : "${var.user}",
+    "password" : "${var.password}",
+    "host" : "${var.host}",
+    "database" : "${var.database}",
   "port" : var.port })
 
   # Policy
