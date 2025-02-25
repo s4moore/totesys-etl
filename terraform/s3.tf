@@ -9,8 +9,14 @@ resource "aws_s3_bucket" "terrific-totes-data" {
 
 data "aws_iam_policy_document" "s3_read_only" {
     statement {
+      effect = "Allow"
+      actions = ["s3:PutObject"]
+      resources = [ "${aws_s3_bucket.terrific-totes-data.arn}/*" ]
+    }
+    statement {
+      effect = "Deny"
       actions = ["s3:GetObject"]
-      resources = [ "${aws_s3_bucket.terrific-totes-data.arn}" ]
+      resources = ["${aws_s3_bucket.terrific-totes-data.arn}/*"]
     }
   
 }
