@@ -97,24 +97,40 @@ def read_timestamp_from_s3(s3, table):
         Dictionary of format {'Table Name':'Timestamp String'}
     """
     try:
-        filename = f"{table}_timestamp.json"
-        response = s3.get_object(Bucket="nc-terraformers-ingestion", Key=filename)
-        body = response["Body"]
-        timestamp = json.loads(body.read().decode())
-        logging.info(f"read {timestamp} from s3")
-        return timestamp
-    except Exception as e:
-        if (
-            e.response["Error"]["Code"] == "NoSuchKey"
-            or e.response["Error"]["Code"] == "AccessDenied"
-        ):
-            logging.info(
-                f"Response whilst collecting timestamp: {e}. Will create new file"
-            )
+        response = s3.list_objects_v2(Bucket="terrific-totes-data-team-11")
+
+        # if no files return prompt to pull all table data
+        if "Contents" not in response:
             return {"detail": "No timestamp exists"}
-        logging.error(
-            f"Unexpected error whilst collecting timestamp: {e}. Will create new file"
-        )
+
+        # get files that match with table name
+        matched_files = []
+        for item in response["Contents"]:
+            if f"{table}." in item["Key"]:
+                matched_files.append(item)
+
+        # if no matched files exist, return prompt to pull all table data
+        if not matched_files:
+            return {"detail": "No timestamp exists"}
+
+        #
+        most_recent_timestamp = None
+        most_recent_file = None
+
+        for item in matched_files:
+            file_name = item["Key"]
+            # get the 'YYYY-MM-DD HH24:MI:SS.US' part from the filename'
+            timestamp_str = file_name.split("/")[0] + " " + file_name.split("/")[1]
+
+            if most_recent_timestamp is None or timestamp_str > most_recent_timestamp:
+                most_recent_timestamp = timestamp_str
+                most_recent_file = file_name
+
+        logging.info(f"read {most_recent_timestamp} from s3")
+        return {table: most_recent_timestamp}
+
+    except Exception as e:
+        logging.error(f"Unexpected error whilst collecting timestamp: {e}.")
         return e
 
 

@@ -37,7 +37,6 @@ def lambda_handler(event, context):
         table_names = get_tables(conn)
         s3 = boto3.client("s3")
         csv_files_written = {}
-        timestamp_json_files_written = []
         for table in table_names:
             timestamp_from_s3 = read_timestamp_from_s3(s3, table)
             if timestamp_from_s3 == {"detail": "No timestamp exists"}:
@@ -50,8 +49,6 @@ def lambda_handler(event, context):
                 df = table_to_dataframe(rows, columns)
                 csv_key = write_df_to_csv(s3, df, table)["key"]
                 csv_files_written[table] = csv_key
-                json_key = write_timestamp_to_s3(s3, df, table)["key"]
-                timestamp_json_files_written.append(json_key)
             else:
                 logging.info(f"No new data in table {table} to upload.")
 
@@ -63,8 +60,7 @@ def lambda_handler(event, context):
         return {
             "response": 200,
             "csv_files_written": csv_files_written,
-            "timestamp_json_files_written": timestamp_json_files_written,
-            "triggerLambda2": triggerLambda2,
+            "triggerLambda2": triggerLambda2
         }
 
     except Exception as e:
