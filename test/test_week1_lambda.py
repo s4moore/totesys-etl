@@ -18,7 +18,6 @@ from src.lambda1_utils import (
     write_df_to_csv,
     table_to_dataframe,
     timestamp_from_df,
-    write_timestamp_to_s3,
 )
 from pg8000.native import Connection
 
@@ -395,23 +394,6 @@ class TestTimestampFromDf:
                 "root ERROR\n  {'column not found': KeyError('last_updated')}" in str(l)
             )
 
-
-class TestWriteTimeStampToS3:
-    def test_uploads_timestamp_to_s3(self, empty_nc_terraformers_ingestion_s3, test_df):
-        s3 = empty_nc_terraformers_ingestion_s3
-        output = write_timestamp_to_s3(s3, test_df, "test")
-        response = s3.list_objects(Bucket="nc-terraformers-ingestion").get("Contents")
-        bucket_files = [file["Key"] for file in response]
-        assert "test_timestamp.json" in bucket_files
-        assert output == {"result": "Success", "key": "test_timestamp.json"}
-
-    def test_handles_df_error(self, empty_nc_terraformers_ingestion_s3):
-        s3 = empty_nc_terraformers_ingestion_s3
-        invalid_df = "invalid_df"
-        with LogCapture() as l:
-            output = write_timestamp_to_s3(s3, invalid_df, "test")
-            assert "root ERROR\n  string indices must be integers, not 'str'" in str(l)
-        assert output == {"result": "Failure"}
 
 
 class TestLambdaHandler:
