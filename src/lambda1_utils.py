@@ -184,7 +184,7 @@ def write_df_to_csv(s3, df, table_name):
             logging.info(f"writing {timestamp}{table_name}.csv")
             response = write_to_s3(
                 s3,
-                "nc-terraformers-ingestion",
+                "terrific-totes-data-team-11",
                 f"{timestamp}{table_name}",
                 "csv",
                 data,
@@ -234,25 +234,3 @@ def timestamp_from_df(df):
         return split_time_stamps(timestamp)
     except KeyError as e:
         logging.error({"column not found": e})
-
-
-def write_timestamp_to_s3(s3, df, table):
-    """
-    Writes timestamp to s3 as JSON dictionary file
-
-    Parameters:
-    s3: Boto3.client('s3') connection
-    Pandas Dataframe
-    Table (str): Table name to be used in filename
-
-    Returns:
-    Dict of {"result": "Success"/"Failure"}"""
-    try:
-        logging.info(f"converting {table} timestamp to JSON")
-        timestamp_json = json.dumps({table: str(timestamp_from_df(df))})
-        filename = f"{table}_timestamp"
-        write_to_s3(s3, "nc-terraformers-ingestion", filename, "json", timestamp_json)
-        return {"result": "Success", "key": f"{table}_timestamp.json"}
-    except Exception as e:
-        logging.error(e)
-        return {"result": "Failure"}
