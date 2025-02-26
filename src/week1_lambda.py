@@ -9,7 +9,6 @@ from src.lambda1_utils import (
     write_df_to_csv,
     table_to_dataframe,
     timestamp_from_df,
-    write_timestamp_to_s3,
 )
 from datetime import datetime
 import json
