@@ -165,20 +165,20 @@ def write_df_to_csv(s3, df, table_name):
             logging.info(f"converting {table_name} dataframe to csv")
             df.to_csv(csv, index=False)
             data = csv.getvalue()
-            logging.info(f"writing {table_name}_{timestamp}.csv")
+            logging.info(f"writing {timestamp}{table_name}.csv")
             response = write_to_s3(
                 s3,
                 "nc-terraformers-ingestion",
-                f"{table_name}/{table_name}_{timestamp}",
+                f"{timestamp}{table_name}",
                 "csv",
                 data,
             )
             if response["result"] == "Success":
-                logging.info(f"{table_name}_{timestamp}.csv successfully written")
+                logging.info(f"{timestamp}{table_name}.csv successfully written")
                 return {
                     "result": "Success",
                     "detail": "Converted to csv, uploaded to ingestion bucket",
-                    "key": f"{table_name}/{table_name}_{timestamp}.csv",
+                    "key": f"{timestamp}{table_name}.csv",
                 }
     except Exception as e:
         logging.error(e)
@@ -200,6 +200,11 @@ def table_to_dataframe(rows, columns):
     except Exception as e:
         logging.error(f"dataframe conversion unsuccessful: {e}")
 
+def split_time_stamps(dt):
+    date = dt.strftime("%Y-%m-%d")
+    time = dt.strftime("%H:%M:%S.%f")
+    object_key =f"{date}/{time}/"
+    return object_key  
 
 def timestamp_from_df(df):
     """Gets most recent timestamp as Datetime object from DataFrame
@@ -209,8 +214,8 @@ def timestamp_from_df(df):
     Returns: Datetime object"""
     try:
         timestamp = df["last_updated"].max()
-        logging.info(f"{timestamp} collected from dataframe")
-        return timestamp
+        logging.info(f"{split_time_stamps(timestamp)} collected from dataframe")
+        return split_time_stamps(timestamp)
     except KeyError as e:
         logging.error({"column not found": e})
 
