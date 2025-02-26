@@ -3,17 +3,18 @@ module "lambda_function" {
 
   function_name = "injest_lambda"
   description   = "Lambda function that injests data from totesys database"
-  handler       = "dummy.dummy" # needs lambda handler here
+  handler       = "week1_lambda.lambda_handler" # needs lambda handler here
   runtime       = "python3.12"
   publish = true
+  timeout = 10
 
-  source_path = "${path.module}/../src/dummy.py" # needs path to src file here
+  source_path = "${path.module}/../src/week1_lambda.py" # needs path to src file here
 
   tags = {
     Name = "injest_lambda"
   }
 
-  layers = [aws_lambda_layer_version.dependencies.arn]
+  layers = ["arn:aws:lambda:eu-west-2:336392948345:layer:AWSSDKPandas-Python312:16",aws_lambda_layer_version.dependencies.arn, aws_lambda_layer_version.custom_layer.arn]
 
   allowed_triggers = {
     EventBridgeScheduler = {
@@ -38,6 +39,11 @@ module "lambda_function" {
       effect    = "Allow"
       actions   = ["logs:*"] 
       resources = ["arn:aws:logs:*"] # need to narrow this down to just the one log folder for just the injest lambda
+    },
+      read_secrets = {
+      effect    = "Allow",
+      actions   = ["secretsmanager:GetSecretValue"],
+      resources = ["*"]
     }
   }
 }
