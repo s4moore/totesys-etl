@@ -21,10 +21,18 @@ jobs:
         run: make requirements
       - name: make dev-setup
         run: make dev-setup
-      # - name: make run-checks
-      #   run: make run-checks
+      - name: make run-checks
+        run: make run-checks
 
   deploy-lambda:
+    name: deploy-lambda
+    runs-on: ubuntu-latest
+    needs: run-tests
+    environment: dev
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+    # install terraform
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
