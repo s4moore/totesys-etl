@@ -17,6 +17,8 @@ def get_tables(conn):
              AND table_type='BASE TABLE';"""
     )
     tables_list = [item[0] for item in data]
+    for item in tables_list:
+        logging.info(item, f' created at {datetime.now().strftime( "%d/%m/%Y, %H:%M:%S")}')
     logging.info("Table names collected from DB")
     return tables_list
 
