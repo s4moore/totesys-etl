@@ -174,14 +174,14 @@ class TestWriteToS3:
         s3 = empty_nc_terraformers_ingestion_s3
         data = json.dumps({"test": "data"})
         assert isinstance(
-            write_to_s3(s3, "nc-terraformers-ingestion", "test-file", "csv", data), dict
+            write_to_s3(s3, "nc-terraformers-ingestion-123", "test-file", "csv", data), dict
         )
 
     def test_writes_file(self, empty_nc_terraformers_ingestion_s3):
         s3 = empty_nc_terraformers_ingestion_s3
         data = json.dumps({"test": "data"})
-        output = write_to_s3(s3, "nc-terraformers-ingestion", "test-file", "csv", data)
-        objects = s3.list_objects(Bucket="nc-terraformers-ingestion")
+        output = write_to_s3(s3, "nc-terraformers-ingestion-123", "test-file", "csv", data)
+        objects = s3.list_objects(Bucket="nc-terraformers-ingestion-123")
         assert objects["Contents"][0]["Key"] == "test-file.csv"
         assert output["result"] == "Success"
 
@@ -269,63 +269,67 @@ class TestWriteDfToPickle:
    ):
        test_name = "staff"
        client = empty_nc_terraformers_ingestion_s3
-       output = write_df_to_pickle(client, test_df, test_name)
+       test_bucket = "nc-terraformers-ingestion-123"
+       output = write_df_to_pickle(client, test_df, test_name, test_bucket)
        assert isinstance(output, dict)
        assert isinstance(output["result"], str)
 
-   def test_converts_data_to_pkl_and_uploads_to_s3_bucket(
-       self, s3_bkt, test_staff_df, aws_cred
+   def test_converts_data_to_pkl_and_uploads_to_s3_bucket(                                ###not asserting properly###
+       self, empty_nc_terraformers_ingestion_s3, test_staff_df
    ):
-        with mock_aws(aws_cred):
             test_name = "staff"
-            client = s3_bkt
-            test_bucket = "nc-terraformers-ingestion"
-            write_df_to_pickle(client, test_staff_df, test_name)
+            client = empty_nc_terraformers_ingestion_s3
+            test_bucket = "nc-terraformers-ingestion-123"
+            something = write_df_to_pickle(client, test_staff_df, test_name, test_bucket)
+            print(something)
             response = client.list_objects_v2(Bucket=test_bucket).get("Contents")
-            bucket_files = [file["Key"] for file in response]
+            bucket_files = [file["Key"] for file in response] # ['2022-11-03/14:20:51.563000/staff.pkl']
             if len(bucket_files) > 1:
                 get_file = client.get_object(Bucket=test_bucket, Key=test_name)
-                assert get_file["ContentType"] == "csv"
+                assert get_file["ContentType"] == "pkl"
 
-   def test_uploads_to_s3_bucket(
+   def test_uploads_to_s3_bucket(                                                        
        self, test_staff_df, empty_nc_terraformers_ingestion_s3
    ):
        test_name = "staff"
        client = empty_nc_terraformers_ingestion_s3
-       output = write_df_to_pickle(client, test_staff_df, test_name)
+       test_bucket = "nc-terraformers-ingestion-123"
+       output = write_df_to_pickle(client, test_staff_df, test_name, test_bucket)
        assert output == {
            "result": "Success",
-           "detail": "Converted to csv, uploaded to ingestion bucket",
-           "key": f"staff/staff_{timestamp_from_df(test_staff_df)}.csv",
+           "detail": "Converted to pkl, uploaded to ingestion bucket",
+           "key": f"{timestamp_from_df(test_staff_df)}staff.pkl",
        }
-       response = client.list_objects_v2(Bucket="nc-terraformers-ingestion").get(
+       response = client.list_objects_v2(Bucket=test_bucket).get(
            "Contents"
        )
        bucket_files = [file["Key"] for file in response]
        for file in bucket_files:
-           assert "staff/staff" in file
-           assert ".csv" in file
+           assert "2022-11-03/14:20:51.563000" in file
+           assert ".pkl" in file
 
    def test_handles_error(self, empty_nc_terraformers_ingestion_s3):
        test_df = ""
        test_name = ""
        s3 = empty_nc_terraformers_ingestion_s3
        with LogCapture() as l:
-           output = write_df_to_pickle(s3, test_df, test_name)
+           test_bucket = "nc-terraformers-ingestion-123"
+           output = write_df_to_pickle(s3, test_df, test_name, test_bucket)
            assert output == {"result": "Failure"}
            assert "string indices must be integers, not 'str'" in str(l)
 
-   def test_writes_last_updated_timestamp_from_df(
+   def test_writes_last_updated_timestamp_from_df(                                      
        self, test_df, empty_nc_terraformers_ingestion_s3
    ):
        s3 = empty_nc_terraformers_ingestion_s3
        last_updated_from_df = timestamp_from_df(test_df)
-       write_df_to_pickle(s3, test_df, "test")
-       response = s3.list_objects_v2(Bucket="nc-terraformers-ingestion").get(
+       test_bucket = "nc-terraformers-ingestion-123"
+       write_df_to_pickle(s3, test_df, "test", test_bucket)
+       response = s3.list_objects_v2(Bucket=test_bucket).get(
            "Contents"
        )
        bucket_files = [file["Key"] for file in response]
-       assert f"test/test_{str(last_updated_from_df)}.csv" in bucket_files
+       assert f"{str(last_updated_from_df)}test.pkl" in bucket_files
 
 
 class TestTableToDataframe:
