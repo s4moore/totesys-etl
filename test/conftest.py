@@ -2,7 +2,7 @@ import os
 import pytest
 import boto3
 from moto import mock_aws
-# from src.lambda1_connection import db_connection
+from src.layer import db_connection
 
 
 @pytest.fixture(scope="function")

@@ -8,7 +8,7 @@ resource "aws_cloudwatch_metric_alarm" "error_raise" {
     evaluation_periods = 1
     metric_name = "Errors"
     namespace = "AWS/Lambda"
-    period = 1
+    period = 10
     statistic = "Sum"
     threshold = 0
 

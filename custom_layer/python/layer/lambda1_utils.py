@@ -129,8 +129,9 @@ def read_timestamp_from_s3(s3, table):
             logging.info(item)
             file_name = item["Key"]
             # get the 'YYYY-MM-DD HH24:MI:SS.US' part from the filename'
-            logging.info(timestamp_str)
+            
             timestamp_str = file_name.split("/")[0] + " " + file_name.split("/")[1]
+            logging.info(timestamp_str)
             
             if most_recent_timestamp is None or timestamp_str > most_recent_timestamp:
                 most_recent_timestamp = timestamp_str
