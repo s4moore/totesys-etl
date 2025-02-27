@@ -10,13 +10,19 @@ from datetime import datetime
 
 
 def get_tables(conn):
+    logging.info('makeing sql query')
     data = conn.run(
         """ SELECT table_name 
              FROM information_schema.tables 
              WHERE table_schema='public' 
              AND table_type='BASE TABLE';"""
     )
-    tables_list = [item[0] for item in data]
+    logging.info(data)
+    # logging.info('made sql query')
+    tables_list = [item[0] for item in data if item[0] != "_prisma_migrations"]
+    for item in tables_list:
+        # logging.info(item, f' created at {datetime.now().strftime( "%d/%m/%Y, %H:%M:%S")}')
+        logging.info(item)
     logging.info("Table names collected from DB")
     return tables_list
 
@@ -108,7 +114,8 @@ def read_timestamp_from_s3(s3, table):
         for item in response["Contents"]:
             if f"{table}." in item["Key"]:
                 matched_files.append(item)
-
+                
+        logging.info(f'matched files >>> {matched_files}')
         # if no matched files exist, return prompt to pull all table data
         if not matched_files:
             return {"detail": "No timestamp exists"}
@@ -118,8 +125,10 @@ def read_timestamp_from_s3(s3, table):
         most_recent_file = None
 
         for item in matched_files:
+            logging.info(item)
             file_name = item["Key"]
             # get the 'YYYY-MM-DD HH24:MI:SS.US' part from the filename'
+            logging.info(timestamp_str)
             timestamp_str = file_name.split("/")[0] + " " + file_name.split("/")[1]
 
             if most_recent_timestamp is None or timestamp_str > most_recent_timestamp:
