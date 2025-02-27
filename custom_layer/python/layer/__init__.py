@@ -6,7 +6,7 @@ from .lambda1_utils import (
     get_tables,
     read_timestamp_from_s3,
     get_new_rows,
-    write_df_to_csv,
+    write_df_to_pickle,
     table_to_dataframe,
     timestamp_from_df
 )

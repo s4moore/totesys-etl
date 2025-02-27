@@ -174,9 +174,9 @@ def get_new_rows(conn, table, timestamp, table_list):
     return []
 
 
-def write_df_to_csv(s3, df, table_name):
+def write_df_to_pickle(s3, df, table_name):
     """Takes rows, columns, and name of a table, converts it
-    to csv file format, and uploads the file to s3 Ingestion bucket.
+    to pkl file format, and uploads the file to s3 Ingestion bucket.
 
     Parameters:
         s3: Boto3.client('s3') connection
@@ -188,28 +188,28 @@ def write_df_to_csv(s3, df, table_name):
     """
     try:
         timestamp = str(timestamp_from_df(df))
-        with StringIO() as csv:
-            logging.info(f"converting {table_name} dataframe to csv")
-            df.to_csv(csv, index=False)
-            data = csv.getvalue()
-            logging.info(f"writing {timestamp}{table_name}.csv")
+        with StringIO() as pickle:
+            logging.info(f"converting {table_name} dataframe to pickle")
+            df.to_pickle(pickle)
+            data = pickle.getvalue()
+            logging.info(f"writing {timestamp}{table_name}.pkl")
             response = write_to_s3(
                 s3,
                 "terrific-totes-data-team-11-1",
                 f"{timestamp}{table_name}",
-                "csv",
+                "pkl",
                 data,
             )
             if response["result"] == "Success":
-                logging.info(f"{timestamp}{table_name}.csv successfully written")
+                logging.info(f"{timestamp}{table_name}.pkl successfully written")
                 return {
                     "result": "Success",
-                    "detail": "Converted to csv, uploaded to ingestion bucket",
-                    "key": f"{timestamp}{table_name}.csv",
+                    "detail": "Converted to pkl, uploaded to ingestion bucket",
+                    "key": f"{timestamp}{table_name}.pkl",
                 }
     except Exception as e:
-        logging.error(e)
-    return {"result": "Failure"}
+        # logging.error(e)
+        return {"result": f"{e}"}
 
 
 def table_to_dataframe(rows, columns):
