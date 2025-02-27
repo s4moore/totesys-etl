@@ -8,6 +8,7 @@ import pandas as pd
 from io import StringIO, BytesIO
 from datetime import datetime
 
+bucket_name = "terrific-totes-data-team-11"
 
 def get_tables(conn):
     logging.info('makeing sql query')
@@ -104,7 +105,7 @@ def read_timestamp_from_s3(s3, table):
         Dictionary of format {'Table Name':'Timestamp String'}
     """
     try:
-        response = s3.list_objects_v2(Bucket="terrific-totes-data-team-11-1")
+        response = s3.list_objects_v2(Bucket=bucket_name)
 
         # if no files return prompt to pull all table data
         if "Contents" not in response:
@@ -195,7 +196,7 @@ def write_df_to_pickle(s3, df, table_name):
             logging.info(f"writing {timestamp}{table_name}.pkl")
             response = write_to_s3(
                 s3,
-                "terrific-totes-data-team-11-1",
+                bucket_name,
                 f"{timestamp}{table_name}",
                 "pkl",
                 data,

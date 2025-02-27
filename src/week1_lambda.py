@@ -1,5 +1,5 @@
-from src.layer.lambda1_connection import db_connection
-from src.layer.lambda1_utils import (
+from layer import db_connection
+from layer import (
     get_all_rows,
     get_columns,
     write_to_s3,
@@ -8,7 +8,7 @@ from src.layer.lambda1_utils import (
     get_new_rows,
     write_df_to_pickle,
     table_to_dataframe,
-    timestamp_from_df,
+    timestamp_from_df
 )
 from datetime import datetime
 import json
