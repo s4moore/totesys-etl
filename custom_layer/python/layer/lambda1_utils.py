@@ -207,10 +207,10 @@ def write_df_to_pickle(s3, df, table_name):
                     "result": "Success",
                     "detail": "Converted to pkl, uploaded to ingestion bucket",
                     "key": f"{timestamp}{table_name}.pkl",
-                }
+                }   
     except Exception as e:
-        # logging.error(e)
-        return {"result": f"{e}"}
+        logging.error(e)
+    return {"result": 'Failure'}
 
 
 def table_to_dataframe(rows, columns):
