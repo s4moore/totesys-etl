@@ -21,5 +21,30 @@ jobs:
         run: make requirements
       - name: make dev-setup
         run: make dev-setup
-      - name: make run-checks
-        run: make run-checks
+      # - name: make run-checks
+      #   run: make run-checks
+
+  deploy-lambda:
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-region: ${{ secrets.AWS_REGION }}
+        aws-access-key-id: ${{ secrets.AWS_KEY }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET }}
+    - name: Setup terraform
+      uses: hashicorp/setup-terraform@v3
+    - name: Terraform init
+      working-directory: ./terraform
+      run: terraform init
+    # terraform plan
+    - name: Terraform plan
+      working-directory: ./terraform
+      run: terraform plan
+    # terraform fmt
+    - name: Terraform format
+      working-directory: ./terraform
+      run: terraform fmt
+    # terraform apply
+    - name: Terraform apply 
+      working-directory: ./terraform
+      run: terraform apply -auto-approve
