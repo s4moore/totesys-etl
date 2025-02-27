@@ -1,4 +1,4 @@
-variable "email" {}
+variable "EMAIL" {}
 
 # injest lambda sns
 resource "aws_sns_topic" "injest_lambda" {
@@ -8,5 +8,5 @@ resource "aws_sns_topic" "injest_lambda" {
 resource "aws_sns_topic_subscription" "injest_lambda-sub" {
   topic_arn = aws_sns_topic.injest_lambda.arn
   protocol  = "email"
-  endpoint  = "${var.email}"
+  endpoint  = "${var.EMAIL}"
 }
