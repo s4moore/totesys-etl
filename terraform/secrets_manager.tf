@@ -40,26 +40,26 @@ data "aws_caller_identity" "current" {}
 #   }
 # }
 
-resource "aws_secretsmanager_secret" "example" {
-  name = "example"
-}
+# resource "aws_secretsmanager_secret" "example" {
+#   name = "example"
+# }
 
-data "aws_iam_policy_document" "example" {
-  statement {
-    sid    = "AllowAccountRead"
-    effect = "Allow"
+# data "aws_iam_policy_document" "example" {
+#   statement {
+#     sid    = "AllowAccountRead"
+#     effect = "Allow"
 
-    principals {
-      type        = "AWS"
-      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
-    }
+#     principals {
+#       type        = "AWS"
+#       identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
+#     }
 
-    actions   = ["secretsmanager:GetSecretValue"]
-    resources = ["*"]
-  }
-}
+#     actions   = ["secretsmanager:GetSecretValue"]
+#     resources = ["*"]
+#   }
+# }
 
-resource "aws_secretsmanager_secret_policy" "example" {
-  secret_arn = aws_secretsmanager_secret.example.arn
-  policy     = data.aws_iam_policy_document.example.json
-}
+# resource "aws_secretsmanager_secret_policy" "example" {
+#   secret_arn = aws_secretsmanager_secret.example.arn
+#   policy     = data.aws_iam_policy_document.example.json
+# }
