@@ -59,6 +59,7 @@ jobs:
       run: terraform fmt
     # terraform apply
     - name: Terraform apply
-
       working-directory: ./terraform
       run: terraform apply -auto-approve
+      env:
+        TF_VAR_EMAIL: ${{ env.TF_VAR_EMAIL }}
