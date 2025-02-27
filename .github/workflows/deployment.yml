@@ -5,7 +5,7 @@ on:
     branches:
       - main
 env:
-  EMAIL: ${{ vars.EMAIL }}
+  TF_VAR_EMAIL: ${{ vars.EMAIL }}
 
 jobs:
 
