@@ -6,7 +6,7 @@ module "lambda_function" {
   handler       = "week1_lambda.lambda_handler" # needs lambda handler here
   runtime       = "python3.12"
   publish = true
-  timeout = 10
+  timeout = 100
 
   source_path = "${path.module}/../src/week1_lambda.py" # needs path to src file here
 

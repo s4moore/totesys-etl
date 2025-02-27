@@ -8,7 +8,7 @@ resource "aws_cloudwatch_metric_alarm" "error_raise" {
     evaluation_periods = 1
     metric_name = "Errors"
     namespace = "AWS/Lambda"
-    period = 10
+    period = 1
     statistic = "Sum"
     threshold = 0
 
@@ -18,9 +18,10 @@ resource "aws_cloudwatch_metric_alarm" "error_raise" {
 
 }
 
+
 resource "aws_cloudwatch_log_metric_filter" "metricFilterResource" {
     name = "ErrorFilter"
-    pattern = "{($.eventName= ErrorInDataFlow) && ($.errorMessage = \"Something happened while trying to pull new data\")}"
+    pattern = "ERROR"
     log_group_name = aws_cloudwatch_log_group.totes404TerraformGroup.name
 
     metric_transformation {
@@ -30,4 +31,3 @@ resource "aws_cloudwatch_log_metric_filter" "metricFilterResource" {
     }
   
 }
-
