@@ -18,3 +18,4 @@ dependencies/
 packages/
 **/__pycache*
 /layer/python
+**/builds
