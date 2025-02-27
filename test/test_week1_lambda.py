@@ -274,10 +274,11 @@ class TestWriteDfToPickle:
        assert isinstance(output["result"], str)
 
    def test_converts_data_to_pkl_and_uploads_to_s3_bucket(
-       self, empty_nc_terraformers_ingestion_s3, test_staff_df, aws_cred
+       self, s3_bkt, test_staff_df, aws_cred
    ):
+        with mock_aws(aws_cred):
             test_name = "staff"
-            client = empty_nc_terraformers_ingestion_s3
+            client = s3_bkt
             test_bucket = "nc-terraformers-ingestion"
             write_df_to_pickle(client, test_staff_df, test_name)
             response = client.list_objects_v2(Bucket=test_bucket).get("Contents")

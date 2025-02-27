@@ -5,7 +5,7 @@ on:
     branches:
       - main
 env:
-  TF_VAR_EMAIL: ${{ vars.EMAIL }}
+  TF_VAR_EMAIL: ${{ secrets.EMAIL }}
 
 jobs:
 
