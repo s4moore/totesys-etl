@@ -24,26 +24,34 @@ module "lambda_function" {
   }
 
   attach_policy_statements = true
+
+  role_name = "lambda_role"
+
   policy_statements = {
-    s3_read_write = {
-      effect    = "Allow"
-      actions   = ["s3:PutObject", "s3:GetObject", "s3:ListBucket"]
-      resources = ["${aws_s3_bucket.terrific-totes-data.arn}/*"]
-    },
-    deny_delete_s3 = {
-      effect = "Deny"
-      actions = ["s3:Delete*"]
-      resources = ["${aws_s3_bucket.terrific-totes-data.arn}/*"]
-    },
-    cw_full_access = {
-      effect    = "Allow"
-      actions   = ["logs:*"] 
-      resources = ["arn:aws:logs:*"] # need to narrow this down to just the one log folder for just the injest lambda
-    },
-      read_secrets = {
-      effect    = "Allow",
-      actions   = ["secretsmanager:GetSecretValue"],
-      resources = ["*"]
+      s3_read_write = {
+        effect    = "Allow",
+        actions   = ["s3:PutObject", "s3:GetObject"],
+        resources = ["${aws_s3_bucket.terrific-totes-data.arn}/*"]
+      },
+      s3_read = {
+        effect    = "Allow",
+        actions   = ["s3:List*"],
+        resources = ["${aws_s3_bucket.terrific-totes-data.arn}"]
+      },
+      deny_delete_s3 = {
+        effect = "Deny",
+        actions = ["s3:Delete*"],
+        resources = ["${aws_s3_bucket.terrific-totes-data.arn}/*"]
+      },
+      cw_full_access = {
+        effect    = "Allow",
+        actions   = ["logs:*"],
+        resources = ["arn:aws:logs:*"],
+      },
+        read_secrets = {
+        effect    = "Allow",
+        actions   = ["secretsmanager:GetSecretValue"],
+        resources = ["*"]
+      }
     }
-  }
 }
