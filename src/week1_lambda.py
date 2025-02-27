@@ -1,5 +1,5 @@
-from layer import db_connection
-from layer import (
+from src.layer.lambda1_connection import db_connection
+from src.layer.lambda1_utils import (
     get_all_rows,
     get_columns,
     write_to_s3,
@@ -32,7 +32,7 @@ def lambda_handler(event, context):
                 "timestamp_json_files_written": timestamp_json_files_written (list)}
     """
     try:
-        conn = db_connection()
+        conn = db_connection() 
         table_names = get_tables(conn)
         s3 = boto3.client("s3")
         csv_files_written = {}
