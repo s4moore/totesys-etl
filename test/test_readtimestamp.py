@@ -33,11 +33,11 @@ def test_returns_time_stamp(aws_credentials):
 def test_returns_no_time_stamp_found(aws_credentials):
     with mock_aws():
         s3 = boto3.client('s3')
-        s3.create_bucket(Bucket='terrific-totes-data-team-11')
-        s3.put_object(Bucket='terrific-totes-data-team-11', Key ='2025-02-25/14:23:15.00/customers.csv')
-        s3.put_object(Bucket='terrific-totes-data-team-11', Key ='2025-02-25/14:20:15.00/customers.csv')
-        s3.put_object(Bucket='terrific-totes-data-team-11', Key ='2025-02-25/14:25:15.00/customers.csv')
-        s3.put_object(Bucket='terrific-totes-data-team-11', Key ='2025-02-25/14:29:15.00/designs.csv')
+        s3.create_bucket(Bucket='terrific-totes-data-team-11-1')
+        s3.put_object(Bucket='terrific-totes-data-team-11-1', Key ='2025-02-25/14:23:15.00/customers.csv')
+        s3.put_object(Bucket='terrific-totes-data-team-11-1', Key ='2025-02-25/14:20:15.00/customers.csv')
+        s3.put_object(Bucket='terrific-totes-data-team-11-1', Key ='2025-02-25/14:25:15.00/customers.csv')
+        s3.put_object(Bucket='terrific-totes-data-team-11-1', Key ='2025-02-25/14:29:15.00/designs.csv')
  
         x = read_timestamp_from_s3(s3client, table='anything')
 
@@ -46,7 +46,7 @@ def test_returns_no_time_stamp_found(aws_credentials):
 def test_returns_no_data_found(aws_credentials):
     with mock_aws():
         s3 = boto3.client('s3')
-        s3.create_bucket(Bucket='terrific-totes-data-team-11')
+        s3.create_bucket(Bucket='terrific-totes-data-team-11-1')
  
         x = read_timestamp_from_s3(s3client, table='customers')
 
@@ -58,7 +58,7 @@ def test_returns_logging(aws_credentials):
     with mock_aws():
         logger.info('testing now')
         s3 = boto3.client('s3')
-        s3.create_bucket(Bucket='terrific-totes-data-team-11')
+        s3.create_bucket(Bucket='terrific-totes-data-team-11-1')
  
         x = read_timestamp_from_s3(s3client, table='customers')
 
