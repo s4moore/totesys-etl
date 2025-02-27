@@ -1,4 +1,4 @@
-from src.lambda1_utils import read_timestamp_from_s3
+from src.layer.lambda1_utils import read_timestamp_from_s3
 import pytest 
 import boto3
 import os
@@ -20,11 +20,11 @@ def aws_credentials():
 def test_returns_time_stamp(aws_credentials):
     with mock_aws():
         s3 = boto3.client('s3')
-        s3.create_bucket(Bucket='terrific-totes-data-team-11')
-        s3.put_object(Bucket='terrific-totes-data-team-11', Key ='2025-02-25/14:23:15.00/customers.csv')
-        s3.put_object(Bucket='terrific-totes-data-team-11', Key ='2025-02-25/14:20:15.00/customers.csv')
-        s3.put_object(Bucket='terrific-totes-data-team-11', Key ='2025-02-25/14:25:15.00/customers.csv')
-        s3.put_object(Bucket='terrific-totes-data-team-11', Key ='2025-02-25/14:29:15.00/designs.csv')
+        s3.create_bucket(Bucket='terrific-totes-data-team-11-1')
+        s3.put_object(Bucket='terrific-totes-data-team-11-1', Key ='2025-02-25/14:23:15.00/customers.csv')
+        s3.put_object(Bucket='terrific-totes-data-team-11-1', Key ='2025-02-25/14:20:15.00/customers.csv')
+        s3.put_object(Bucket='terrific-totes-data-team-11-1', Key ='2025-02-25/14:25:15.00/customers.csv')
+        s3.put_object(Bucket='terrific-totes-data-team-11-1', Key ='2025-02-25/14:29:15.00/designs.csv')
  
         x = read_timestamp_from_s3(s3client, table='customers')
 
