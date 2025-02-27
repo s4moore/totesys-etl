@@ -5,7 +5,7 @@ from pg8000.native import identifier
 import logging
 import json
 import pandas as pd
-from io import StringIO
+from io import BytesIO
 from datetime import datetime
 
 bucket_name = "terrific-totes-data-team-11"
@@ -189,7 +189,7 @@ def write_df_to_pickle(s3, df, table_name):
     """
     try:
         timestamp = str(timestamp_from_df(df))
-        with StringIO() as pickle:
+        with BytesIO() as pickle:
             logging.info(f"converting {table_name} dataframe to pickle")
             df.to_pickle(pickle)
             data = pickle.getvalue()
