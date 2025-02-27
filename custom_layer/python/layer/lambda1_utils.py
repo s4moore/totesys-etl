@@ -175,7 +175,7 @@ def get_new_rows(conn, table, timestamp, table_list):
     return []
 
 
-def write_df_to_pickle(s3, df, table_name):
+def write_df_to_pickle(s3, df, table_name, bucket_name):
     """Takes rows, columns, and name of a table, converts it
     to pkl file format, and uploads the file to s3 Ingestion bucket.
 
