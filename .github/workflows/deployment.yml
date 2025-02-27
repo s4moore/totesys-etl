@@ -62,4 +62,4 @@ jobs:
       working-directory: ./terraform
       run: terraform apply -auto-approve
       env:
-        TF_VAR_EMAIL: ${{ env.TF_VAR_EMAIL }}
+        TF_VAR_EMAIL: ${{ secrets.TF_VAR_EMAIL }}
