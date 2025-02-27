@@ -13,10 +13,11 @@ def get_tables(conn):
     data = conn.run(
         """ SELECT table_name 
              FROM information_schema.tables 
-             WHERE table_schema='public' 
+           
+             where table_schema='public' 
              AND table_type='BASE TABLE';"""
     )
-    tables_list = [item[0] for item in data]
+    tables_list = [item[0] for item in data if item[0] != "_prisma_migrations"]
     logging.info("Table names collected from DB")
     return tables_list
 
@@ -97,7 +98,7 @@ def read_timestamp_from_s3(s3, table):
         Dictionary of format {'Table Name':'Timestamp String'}
     """
     try:
-        response = s3.list_objects_v2(Bucket="terrific-totes-data-team-11")
+        response = s3.list_objects_v2(Bucket="terrific-totes-data-team-11-1")
 
         # if no files return prompt to pull all table data
         if "Contents" not in response:
@@ -184,7 +185,7 @@ def write_df_to_csv(s3, df, table_name):
             logging.info(f"writing {timestamp}{table_name}.csv")
             response = write_to_s3(
                 s3,
-                "terrific-totes-data-team-11",
+                "terrific-totes-data-team-11-1",
                 f"{timestamp}{table_name}",
                 "csv",
                 data,
@@ -216,11 +217,13 @@ def table_to_dataframe(rows, columns):
     except Exception as e:
         logging.error(f"dataframe conversion unsuccessful: {e}")
 
+
 def split_time_stamps(dt):
     date = dt.strftime("%Y-%m-%d")
     time = dt.strftime("%H:%M:%S.%f")
-    object_key =f"{date}/{time}/"
-    return object_key  
+    object_key = f"{date}/{time}/"
+    return object_key
+
 
 def timestamp_from_df(df):
     """Gets most recent timestamp as Datetime object from DataFrame

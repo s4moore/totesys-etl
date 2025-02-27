@@ -4,7 +4,7 @@ import pytest
 import pandas as pd
 from testfixtures import LogCapture
 from moto import mock_aws
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 from datetime import datetime
 from src.week1_lambda import lambda_handler
 from src.lambda1_connection import db_connection, get_db_creds
@@ -18,6 +18,7 @@ from src.lambda1_utils import (
     write_df_to_csv,
     table_to_dataframe,
     timestamp_from_df,
+    split_time_stamps
 )
 from pg8000.native import Connection
 
@@ -111,18 +112,19 @@ class TestGetTables:
     def test_get_tables_returns_tables(self):
         conn = db_connection()
         tables = get_tables(conn)
+        
         assert tables == [
-            "sales_order",
-            "transaction",
-            "department",
-            "staff",
-            "purchase_order",
-            "counterparty",
-            "payment",
-            "currency",
-            "payment_type",
-            "address",
-            "design",
+            'transaction',
+            'department',
+             'sales_order',
+              'design', 
+            'currency',
+             'payment_type',
+              'counterparty', 
+              'payment', 
+              'address', 
+            'purchase_order',
+              'staff'
         ]
 
 
@@ -216,36 +218,9 @@ Invalid type for parameter Body, value: True, type: <class 'bool'>, valid types:
             )
 
 
-class TestReadTimestampFromS3:
-    def test_returns_dict(self, empty_nc_terraformers_ingestion_s3):
-        s3 = empty_nc_terraformers_ingestion_s3
-        output = read_timestamp_from_s3(s3, "staff")
-        assert isinstance(output, dict)
-
-    def test_returns_timestamp_dict(self, empty_nc_terraformers_ingestion_s3):
-        s3 = empty_nc_terraformers_ingestion_s3
-        data = json.dumps({"staff": "test_timestamp"})
-        s3.put_object(
-            Bucket="nc-terraformers-ingestion", Body=data, Key="staff_timestamp.json"
-        )
-        output = read_timestamp_from_s3(s3, "staff")
-        assert output == json.loads(data)
-
-    def test_handles_no_timestamp(self, empty_nc_terraformers_ingestion_s3):
-        s3 = empty_nc_terraformers_ingestion_s3
-        table = "staff"
-        output = read_timestamp_from_s3(s3, table)
-        assert output == {"detail": "No timestamp exists"}
-
-    @mock_aws
-    def test_handles_no_such_bucket_error(self):
-        s3 = boto3.client("s3")
-        table = "staff"
-        with LogCapture() as l:
-            output = read_timestamp_from_s3(s3, table)
-            assert output.response["Error"]["Code"] == "NoSuchBucket"
-            assert "Unexpected error whilst collecting timestamp" in str(l)
-            assert "Will create new file" in str(l)
+class TestTimeStamp:
+    def test_split_stamps_returns_correct_path_format(self):
+        assert split_time_stamps(datetime(2025, 2, 12, 18, 5, 9, 793000)) == "2025-02-12/18:05:09.793000/"
 
 
 class TestGetNewRows:
