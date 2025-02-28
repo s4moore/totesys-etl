@@ -23,10 +23,7 @@ def get_tables(conn):
     logging.info(data)
     # logging.info('made sql query')
     tables_list = [item[0] for item in data if item[0] != "_prisma_migrations"]
-    for item in tables_list:
-        # logging.info(item, f' created at {datetime.now().strftime( "%d/%m/%Y, %H:%M:%S")}')
-        logging.info(item)
-    logging.info("Table names collected from DB")
+    logging.info(f'Table names created from DB:  {tables_list}')
     return tables_list
 
 
@@ -66,7 +63,7 @@ def get_columns(conn, table, table_list):
     if table in table_list:
         conn.run(f"SELECT * FROM {identifier(table)};")
         columns = [col["name"] for col in conn.columns]
-        logging.info(f"Columns from {table} collected")
+        logging.info(f"All collectable columns from {table} collected")
         return columns
     else:
         logging.error(f"Table {table} not found")
@@ -88,7 +85,7 @@ def write_to_s3(s3, bucket_name, filename, format, data):
     """
     try:
         s3.put_object(Bucket=bucket_name, Key=f"{filename}.{format}", Body=data)
-        logging.info(f"{filename}.{format} written to s3")
+        logging.info(f"writing to s3 ... {filename}.{format}")
     except (ClientError, ParamValidationError) as e:
         logging.error(e)
         return {"result": "Failure"}
@@ -118,7 +115,7 @@ def read_timestamp_from_s3(s3, table):
             if f"{table}." in item["Key"]:
                 matched_files.append(item)
 
-        logging.info(f"matched files >>> {matched_files}")
+        logging.info(f"Searching for most recent timestamp from {table} with s3 data >>> {matched_files}")
         # if no matched files exist, return prompt to pull all table data
         if not matched_files:
             return {"detail": "No timestamp exists"}
@@ -128,18 +125,16 @@ def read_timestamp_from_s3(s3, table):
         most_recent_file = None
 
         for item in matched_files:
-            logging.info(item)
             file_name = item["Key"]
             # get the 'YYYY-MM-DD HH24:MI:SS.US' part from the filename'
 
             timestamp_str = file_name.split("/")[0] + " " + file_name.split("/")[1]
-            logging.info(timestamp_str)
 
             if most_recent_timestamp is None or timestamp_str > most_recent_timestamp:
                 most_recent_timestamp = timestamp_str
                 most_recent_file = file_name
 
-        logging.info(f"read {most_recent_timestamp} from s3")
+        logging.info(f"most recent timestamp identified as {most_recent_timestamp} from s3")
         return {table: most_recent_timestamp}
 
     except Exception as e:

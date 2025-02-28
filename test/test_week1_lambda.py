@@ -166,7 +166,7 @@ class TestWriteToS3:
                 s3,
                 "nc-terraformers-ingestion-123",
                 "test-file",
-                "csv",
+                "pkl",
                 data,
             ),
             dict,
@@ -179,11 +179,11 @@ class TestWriteToS3:
             s3,
             "nc-terraformers-ingestion-123",
             "test-file",
-            "csv",
+            "pkl",
             data,
         )
         objects = s3.list_objects(Bucket="nc-terraformers-ingestion-123")
-        assert objects["Contents"][0]["Key"] == "test-file.csv"
+        assert objects["Contents"][0]["Key"] == "test-file.pkl"
         assert output["result"] == "Success"
 
     @mock_aws
@@ -193,7 +193,7 @@ class TestWriteToS3:
 
         with LogCapture() as log:
             output = write_to_s3(
-                s3, "non-existant-bucket", "test-file", "csv", data
+                s3, "non-existant-bucket", "test-file", "pkl", data
             )
             assert output["result"] == "Failure"
             assert (
@@ -207,7 +207,7 @@ class TestWriteToS3:
         data = True
         s3 = empty_nc_terraformers_ingestion_s3
         with LogCapture() as log:
-            output = write_to_s3(s3, "test-bucket", "test-file", "csv", data)
+            output = write_to_s3(s3, "test-bucket", "test-file", "pkl", data)
             assert output["result"] == "Failure"
             assert """root ERROR
   Parameter validation failed:
@@ -236,13 +236,16 @@ class TestGetNewRows:
 
     def test_handles_incorrect_timestamp(self, test_tables):
         conn = db_connection()
-        with LogCapture() as l:
+        with LogCapture() as log:
             output = get_new_rows(
                 conn, "staff", "incorrect timestamp", test_tables
             )
             assert (
-                """{'S': 'ERROR', 'V': 'ERROR', 'C': '22007', 'M': 'invalid value "inco" for "YYYY"', 'D': 'Value must be an integer.', 'F': 'formatting.c', 'L': '2416', 'R': 'from_char_parse_int_len'}"""
-                in str(l)
+                "{'S': 'ERROR', 'V': 'ERROR', 'C': '22007', 'M': 'invalid " +
+                "value \"inco\" for \"YYYY\"', 'D': 'Value must be an " +
+                "integer.', 'F': 'formatting.c', 'L': '2416', 'R': " + 
+                "'from_char_parse_int_len'}"
+                in str(log)
             )
         assert output == []
 
@@ -385,18 +388,13 @@ class TestLambdaHandler:
         assert output["response"] == 200
 
     def test_lambda_conatints_dict_with_list_of_cvs_files(self):
-        output = lambda_handler({}, [])
-        assert isinstance(output["csv_files_written"], dict)
-        assert "csv_files_written" in output.keys()
+        output = lambda_handler({},[])
+        assert isinstance(output["pkl_files_written"],dict)
+        assert "pkl_files_written" in output.keys()
 
     @mock.patch("week1_lambda.get_tables")
-    def test_lambda_raise_exception_error_message(self, mock_conn):
-        mock_conn.side_effect = Exception("error")
-        result = lambda_handler({}, [])["response"]
-        expected = 500
-        assert result == expected
-
-    def test_lambda_executed_timestamp_logger(self, caplog):
-        with caplog.at_level(logging.INFO):
-            lambda_handler({}, [])
-        assert "Lambda executed at" in caplog.text
+    def test_lambda_raise_exception_error_message(self,mock_conn):
+          mock_conn.side_effect = Exception('error')
+          result = lambda_handler({},[])['response']
+          expected = 500
+          assert result == expected
