@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - main
-# env:
-#   TF_VAR_EMAIL: ${{ secrets.EMAIL }}
+env:
+  TF_VAR_EMAIL: ${{ secrets.EMAIL }}
 
 jobs:
 
@@ -44,8 +44,8 @@ jobs:
 
     - name: Setup terraform
       uses: hashicorp/setup-terraform@v3
-      with:
-        TF_VAR_EMAIL: ${{ env.TF_VAR_EMAIL }}
+      # with:
+      #   TF_VAR_EMAIL: ${{ env.TF_VAR_EMAIL }}
 
     - name: Terraform init
       working-directory: ./terraform
