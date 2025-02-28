@@ -2,17 +2,14 @@ from layer import db_connection
 from layer import (
     get_all_rows,
     get_columns,
-    write_to_s3,
     get_tables,
     read_timestamp_from_s3,
     get_new_rows,
     write_df_to_pickle,
     table_to_dataframe,
-    timestamp_from_df,
     bucket_name,
 )
 from datetime import datetime
-import json
 import logging
 import boto3
 
@@ -29,8 +26,9 @@ def lambda_handler(event, context):
 
     Returns:
     {"response": 200,
-                "csv_files_written": {table_name : csv_file_written, table_name : csv_file_written},
-                "timestamp_json_files_written": timestamp_json_files_written (list)}
+        "csv_files_written":
+        {table_name : csv_file_written, table_name : csv_file_written},
+        "timestamp_json_files_written": timestamp_json_files_written (list)}
     """
     try:
         conn = db_connection()
@@ -42,7 +40,8 @@ def lambda_handler(event, context):
             if timestamp_from_s3 == {"detail": "No timestamp exists"}:
                 rows = get_all_rows(conn, table, table_names)
             else:
-                rows = get_new_rows(conn, table, timestamp_from_s3[table], table_names)
+                rows = get_new_rows(
+                    conn, table, timestamp_from_s3[table], table_names)
             columns = get_columns(conn, table, table_names)
 
             if rows != []:

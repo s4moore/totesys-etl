@@ -22,10 +22,14 @@ def test_returns_time_stamp(aws_credentials):
     with mock_aws():
         s3 = boto3.client("s3")
         s3.create_bucket(Bucket=bucket_name)
-        s3.put_object(Bucket=bucket_name, Key="2025-02-25/14:23:15.00/customers.csv")
-        s3.put_object(Bucket=bucket_name, Key="2025-02-25/14:20:15.00/customers.csv")
-        s3.put_object(Bucket=bucket_name, Key="2025-02-25/14:25:15.00/customers.csv")
-        s3.put_object(Bucket=bucket_name, Key="2025-02-25/14:29:15.00/designs.csv")
+        s3.put_object(Bucket=bucket_name,
+                      Key="2025-02-25/14:23:15.00/customers.csv")
+        s3.put_object(Bucket=bucket_name,
+                      Key="2025-02-25/14:20:15.00/customers.csv")
+        s3.put_object(Bucket=bucket_name,
+                      Key="2025-02-25/14:25:15.00/customers.csv")
+        s3.put_object(Bucket=bucket_name,
+                      Key="2025-02-25/14:29:15.00/designs.csv")
 
         x = read_timestamp_from_s3(s3client, table="customers")
 
@@ -36,10 +40,14 @@ def test_returns_no_time_stamp_found(aws_credentials):
     with mock_aws():
         s3 = boto3.client("s3")
         s3.create_bucket(Bucket=bucket_name)
-        s3.put_object(Bucket=bucket_name, Key="2025-02-25/14:23:15.00/customers.csv")
-        s3.put_object(Bucket=bucket_name, Key="2025-02-25/14:20:15.00/customers.csv")
-        s3.put_object(Bucket=bucket_name, Key="2025-02-25/14:25:15.00/customers.csv")
-        s3.put_object(Bucket=bucket_name, Key="2025-02-25/14:29:15.00/designs.csv")
+        s3.put_object(Bucket=bucket_name,
+                      Key="2025-02-25/14:23:15.00/customers.csv")
+        s3.put_object(Bucket=bucket_name,
+                      Key="2025-02-25/14:20:15.00/customers.csv")
+        s3.put_object(Bucket=bucket_name,
+                      Key="2025-02-25/14:25:15.00/customers.csv")
+        s3.put_object(Bucket=bucket_name,
+                      Key="2025-02-25/14:29:15.00/designs.csv")
 
         x = read_timestamp_from_s3(s3client, table="anything")
 

@@ -46,10 +46,6 @@ requirements: create-environment
 bandit:
 	$(call execute_in_env, $(PIP) install bandit)
 
-## Install black
-black:
-	$(call execute_in_env, $(PIP) install black)
-
 ## Install flake8
 flake8:
 	$(call execute_in_env, $(PIP) install flake8)
@@ -60,7 +56,7 @@ coverage:
 	$(call execute_in_env, $(PIP) install pytest-cov)
 
 ## Set up dev requirements (bandit, black)
-dev-setup: bandit black flake8 coverage
+dev-setup: bandit flake8 coverage
 
 # Build / Run
 
@@ -72,10 +68,6 @@ run-bandit:
 run-flake8:
 	$(call execute_in_env, flake8  ./src/*.py ./test/*.py)
 
-## Run the black code check
-run-black:
-	$(call execute_in_env, black  ./src/*.py ./test/*.py)
-
 ## Run the unit tests
 unit-test:
 	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest test/ -v)
@@ -85,4 +77,4 @@ check-coverage:
 	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest --cov=src test/)
 
 ## Run all checks
-run-checks: run-bandit run-black run-flake8 unit-test check-coverage
+run-checks: run-bandit run-flake8 unit-test check-coverage
