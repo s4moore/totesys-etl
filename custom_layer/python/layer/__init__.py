@@ -8,5 +8,6 @@ from .lambda1_utils import (
     get_new_rows,
     write_df_to_pickle,
     table_to_dataframe,
-    timestamp_from_df
+    timestamp_from_df,
+    split_time_stamps
 )

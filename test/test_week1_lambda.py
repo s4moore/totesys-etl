@@ -8,9 +8,9 @@ from moto import mock_aws
 from unittest.mock import patch, Mock
 from unittest import mock
 from datetime import datetime
-from src.week1_lambda import lambda_handler
-from src.layer.lambda1_connection import db_connection, get_db_creds
-from src.layer.lambda1_utils import (
+from week1_lambda import lambda_handler
+from layer import db_connection, get_db_creds
+from layer import (
     get_all_rows,
     get_columns,
     write_to_s3,
