@@ -23,6 +23,10 @@ jobs:
         run: make dev-setup
       - name: make run-checks
         run: make run-checks
+        env:
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET }}
 
   deploy-lambda:
     name: deploy-lambda
