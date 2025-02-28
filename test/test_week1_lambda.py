@@ -158,16 +158,6 @@ class TestGetColumns:
         result = get_columns(conn, "staff", test_tables)
         assert len(result) == 7
 
-
-class TestLogger:
-
-    def test_lambda_executed_timestamp_logger(self, caplog):
-
-        with caplog.at_level(logging.INFO):
-            lambda_handler({}, [])
-        assert "Lambda executed at" in caplog.text
-
-
 class TestWriteToS3:
     def test_returns_dict(self, empty_nc_terraformers_ingestion_s3):
         s3 = empty_nc_terraformers_ingestion_s3
@@ -280,21 +270,20 @@ class TestWriteDfToPickle:
         assert isinstance(output, dict)
         assert isinstance(output["result"], str)
 
-    def test_converts_data_to_pkl_and_uploads_to_s3_bucket(  ###not asserting properly###
+    def test_converts_data_to_pkl(
         self, empty_nc_terraformers_ingestion_s3, test_staff_df
     ):
         test_name = "staff"
         client = empty_nc_terraformers_ingestion_s3
         test_bucket = "nc-terraformers-ingestion-123"
-        something = write_df_to_pickle(client, test_staff_df, test_name, test_bucket)
-        print(something)
+        write_df_to_pickle(client, test_staff_df, test_name, test_bucket)
         response = client.list_objects_v2(Bucket=test_bucket).get("Contents")
         bucket_files = [
             file["Key"] for file in response
-        ]  # ['2022-11-03/14:20:51.563000/staff.pkl']
-        if len(bucket_files) > 1:
-            get_file = client.get_object(Bucket=test_bucket, Key=test_name)
-            assert get_file["ContentType"] == "pkl"
+        ]
+        if len(bucket_files) >= 1:
+            get_file = client.get_object(Bucket=test_bucket, Key=bucket_files[0])
+            assert get_file["ContentType"] == 'binary/octet-stream'
 
     def test_uploads_to_s3_bucket(
         self, test_staff_df, empty_nc_terraformers_ingestion_s3
@@ -384,3 +373,8 @@ class TestLambdaHandler:
         result = lambda_handler({}, [])["response"]
         expected = 500
         assert result == expected
+    
+    def test_lambda_executed_timestamp_logger(self, caplog):
+        with caplog.at_level(logging.INFO):
+            lambda_handler({}, [])
+        assert "Lambda executed at" in caplog.text
