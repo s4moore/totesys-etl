@@ -4,7 +4,9 @@ on:
   push:
     branches:
       - main
-      
+# env:
+#   TF_VAR_EMAIL: ${{ secrets.EMAIL }}
+
 jobs:
 
   run-tests:
@@ -42,6 +44,9 @@ jobs:
 
     - name: Setup terraform
       uses: hashicorp/setup-terraform@v3
+      with:
+        TF_VAR_EMAIL: ${{ env.TF_VAR_EMAIL }}
+
     - name: Terraform init
       working-directory: ./terraform
       run: terraform init
@@ -57,5 +62,5 @@ jobs:
     - name: Terraform apply
       working-directory: ./terraform
       run: terraform apply -auto-approve
-      env:
-        TF_VAR_EMAIL: ${{ secrets.TF_VAR_EMAIL }}
+      # env:
+      #   TF_VAR_EMAIL: ${{ secrets.TF_VAR_EMAIL }}
