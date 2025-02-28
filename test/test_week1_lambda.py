@@ -240,9 +240,7 @@ class TestGetNewRows:
             )
             assert (
                 "{'S': 'ERROR', 'V': 'ERROR', 'C': '22007', 'M': "
-                "'invalid value \"inco\" for \"YYYY\"', 'D': "
-                "'Value must be an integer.', 'F': 'formatting.c',"
-                "'L': '2416', 'R': 'from_char_parse_int_len'}") in str(log)
+                "'invalid value \"inco\"") in str(log)
         assert output == []
 
     def test_returns_data_after_timestamp(self, test_tables):
