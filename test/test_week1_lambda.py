@@ -174,15 +174,15 @@ class TestWriteToS3:
         s3 = empty_nc_terraformers_ingestion_s3
         data = json.dumps({"test": "data"})
         assert isinstance(
-            write_to_s3(s3, "nc-terraformers-ingestion-123", "test-file", "csv", data), dict
+            write_to_s3(s3, "nc-terraformers-ingestion-123", "test-file", "pkl", data), dict
         )
 
     def test_writes_file(self, empty_nc_terraformers_ingestion_s3):
         s3 = empty_nc_terraformers_ingestion_s3
         data = json.dumps({"test": "data"})
-        output = write_to_s3(s3, "nc-terraformers-ingestion-123", "test-file", "csv", data)
+        output = write_to_s3(s3, "nc-terraformers-ingestion-123", "test-file", "pkl", data)
         objects = s3.list_objects(Bucket="nc-terraformers-ingestion-123")
-        assert objects["Contents"][0]["Key"] == "test-file.csv"
+        assert objects["Contents"][0]["Key"] == "test-file.pkl"
         assert output["result"] == "Success"
 
     @mock_aws
@@ -191,7 +191,7 @@ class TestWriteToS3:
         data = json.dumps({"test": "data"})
 
         with LogCapture() as l:
-            output = write_to_s3(s3, "non-existant-bucket", "test-file", "csv", data)
+            output = write_to_s3(s3, "non-existant-bucket", "test-file", "pkl", data)
             assert output["result"] == "Failure"
             assert """root ERROR
   An error occurred (NoSuchBucket) when calling the PutObject operation: The specified bucket does not exist""" in (
@@ -202,7 +202,7 @@ class TestWriteToS3:
         data = True
         s3 = empty_nc_terraformers_ingestion_s3
         with LogCapture() as l:
-            output = write_to_s3(s3, "test-bucket", "test-file", "csv", data)
+            output = write_to_s3(s3, "test-bucket", "test-file", "pkl", data)
             assert output["result"] == "Failure"
             assert """root ERROR
   Parameter validation failed:
@@ -372,8 +372,8 @@ class TestLambdaHandler:
     
     def test_lambda_conatints_dict_with_list_of_cvs_files(self):
         output = lambda_handler({},[])
-        assert isinstance(output["csv_files_written"],dict)
-        assert "csv_files_written" in output.keys()
+        assert isinstance(output["pkl_files_written"],dict)
+        assert "pkl_files_written" in output.keys()
 
     @mock.patch("week1_lambda.get_tables")
     def test_lambda_raise_exception_error_message(self,mock_conn):
