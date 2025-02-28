@@ -20,7 +20,7 @@ from layer import (
     write_df_to_pickle,
     table_to_dataframe,
     timestamp_from_df,
-    split_time_stamps
+    split_time_stamps,
 )
 from pg8000.native import Connection
 
@@ -114,19 +114,19 @@ class TestGetTables:
     def test_get_tables_returns_tables(self):
         conn = db_connection()
         tables = get_tables(conn)
-        
+
         assert tables == [
-            'transaction',
-            'department',
-             'sales_order',
-              'design', 
-            'currency',
-             'payment_type',
-              'counterparty', 
-              'payment', 
-              'address', 
-            'purchase_order',
-              'staff'
+            "transaction",
+            "department",
+            "sales_order",
+            "design",
+            "currency",
+            "payment_type",
+            "counterparty",
+            "payment",
+            "address",
+            "purchase_order",
+            "staff",
         ]
 
 
@@ -160,13 +160,12 @@ class TestGetColumns:
 
 
 class TestLogger:
-   
-    def test_lambda_executed_timestamp_logger(self,caplog):
-     
+
+    def test_lambda_executed_timestamp_logger(self, caplog):
+
         with caplog.at_level(logging.INFO):
-             lambda_handler({},[])
+            lambda_handler({}, [])
         assert "Lambda executed at" in caplog.text
-           
 
 
 class TestWriteToS3:
@@ -174,13 +173,16 @@ class TestWriteToS3:
         s3 = empty_nc_terraformers_ingestion_s3
         data = json.dumps({"test": "data"})
         assert isinstance(
-            write_to_s3(s3, "nc-terraformers-ingestion-123", "test-file", "csv", data), dict
+            write_to_s3(s3, "nc-terraformers-ingestion-123", "test-file", "csv", data),
+            dict,
         )
 
     def test_writes_file(self, empty_nc_terraformers_ingestion_s3):
         s3 = empty_nc_terraformers_ingestion_s3
         data = json.dumps({"test": "data"})
-        output = write_to_s3(s3, "nc-terraformers-ingestion-123", "test-file", "csv", data)
+        output = write_to_s3(
+            s3, "nc-terraformers-ingestion-123", "test-file", "csv", data
+        )
         objects = s3.list_objects(Bucket="nc-terraformers-ingestion-123")
         assert objects["Contents"][0]["Key"] == "test-file.csv"
         assert output["result"] == "Success"
@@ -213,7 +215,10 @@ Invalid type for parameter Body, value: True, type: <class 'bool'>, valid types:
 
 class TestTimeStamp:
     def test_split_stamps_returns_correct_path_format(self):
-        assert split_time_stamps(datetime(2025, 2, 12, 18, 5, 9, 793000)) == "2025-02-12/18:05:09.793000/"
+        assert (
+            split_time_stamps(datetime(2025, 2, 12, 18, 5, 9, 793000))
+            == "2025-02-12/18:05:09.793000/"
+        )
 
 
 class TestGetNewRows:
@@ -263,73 +268,72 @@ class TestGetNewRows:
             assert output == []
             assert "root ERROR" in str(l)
 
+
 class TestWriteDfToPickle:
-   def test_returns_a_dict_with_result_key(
-       self, empty_nc_terraformers_ingestion_s3, test_df
-   ):
-       test_name = "staff"
-       client = empty_nc_terraformers_ingestion_s3
-       test_bucket = "nc-terraformers-ingestion-123"
-       output = write_df_to_pickle(client, test_df, test_name, test_bucket)
-       assert isinstance(output, dict)
-       assert isinstance(output["result"], str)
+    def test_returns_a_dict_with_result_key(
+        self, empty_nc_terraformers_ingestion_s3, test_df
+    ):
+        test_name = "staff"
+        client = empty_nc_terraformers_ingestion_s3
+        test_bucket = "nc-terraformers-ingestion-123"
+        output = write_df_to_pickle(client, test_df, test_name, test_bucket)
+        assert isinstance(output, dict)
+        assert isinstance(output["result"], str)
 
-   def test_converts_data_to_pkl_and_uploads_to_s3_bucket(                                ###not asserting properly###
-       self, empty_nc_terraformers_ingestion_s3, test_staff_df
-   ):
-            test_name = "staff"
-            client = empty_nc_terraformers_ingestion_s3
+    def test_converts_data_to_pkl_and_uploads_to_s3_bucket(  ###not asserting properly###
+        self, empty_nc_terraformers_ingestion_s3, test_staff_df
+    ):
+        test_name = "staff"
+        client = empty_nc_terraformers_ingestion_s3
+        test_bucket = "nc-terraformers-ingestion-123"
+        something = write_df_to_pickle(client, test_staff_df, test_name, test_bucket)
+        print(something)
+        response = client.list_objects_v2(Bucket=test_bucket).get("Contents")
+        bucket_files = [
+            file["Key"] for file in response
+        ]  # ['2022-11-03/14:20:51.563000/staff.pkl']
+        if len(bucket_files) > 1:
+            get_file = client.get_object(Bucket=test_bucket, Key=test_name)
+            assert get_file["ContentType"] == "pkl"
+
+    def test_uploads_to_s3_bucket(
+        self, test_staff_df, empty_nc_terraformers_ingestion_s3
+    ):
+        test_name = "staff"
+        client = empty_nc_terraformers_ingestion_s3
+        test_bucket = "nc-terraformers-ingestion-123"
+        output = write_df_to_pickle(client, test_staff_df, test_name, test_bucket)
+        assert output == {
+            "result": "Success",
+            "detail": "Converted to pkl, uploaded to ingestion bucket",
+            "key": f"{timestamp_from_df(test_staff_df)}staff.pkl",
+        }
+        response = client.list_objects_v2(Bucket=test_bucket).get("Contents")
+        bucket_files = [file["Key"] for file in response]
+        for file in bucket_files:
+            assert "2022-11-03/14:20:51.563000" in file
+            assert ".pkl" in file
+
+    def test_handles_error(self, empty_nc_terraformers_ingestion_s3):
+        test_df = ""
+        test_name = ""
+        s3 = empty_nc_terraformers_ingestion_s3
+        with LogCapture() as l:
             test_bucket = "nc-terraformers-ingestion-123"
-            something = write_df_to_pickle(client, test_staff_df, test_name, test_bucket)
-            print(something)
-            response = client.list_objects_v2(Bucket=test_bucket).get("Contents")
-            bucket_files = [file["Key"] for file in response] # ['2022-11-03/14:20:51.563000/staff.pkl']
-            if len(bucket_files) > 1:
-                get_file = client.get_object(Bucket=test_bucket, Key=test_name)
-                assert get_file["ContentType"] == "pkl"
+            output = write_df_to_pickle(s3, test_df, test_name, test_bucket)
+            assert output == {"result": "Failure"}
+            assert "string indices must be integers, not 'str'" in str(l)
 
-   def test_uploads_to_s3_bucket(                                                        
-       self, test_staff_df, empty_nc_terraformers_ingestion_s3
-   ):
-       test_name = "staff"
-       client = empty_nc_terraformers_ingestion_s3
-       test_bucket = "nc-terraformers-ingestion-123"
-       output = write_df_to_pickle(client, test_staff_df, test_name, test_bucket)
-       assert output == {
-           "result": "Success",
-           "detail": "Converted to pkl, uploaded to ingestion bucket",
-           "key": f"{timestamp_from_df(test_staff_df)}staff.pkl",
-       }
-       response = client.list_objects_v2(Bucket=test_bucket).get(
-           "Contents"
-       )
-       bucket_files = [file["Key"] for file in response]
-       for file in bucket_files:
-           assert "2022-11-03/14:20:51.563000" in file
-           assert ".pkl" in file
-
-   def test_handles_error(self, empty_nc_terraformers_ingestion_s3):
-       test_df = ""
-       test_name = ""
-       s3 = empty_nc_terraformers_ingestion_s3
-       with LogCapture() as l:
-           test_bucket = "nc-terraformers-ingestion-123"
-           output = write_df_to_pickle(s3, test_df, test_name, test_bucket)
-           assert output == {"result": "Failure"}
-           assert "string indices must be integers, not 'str'" in str(l)
-
-   def test_writes_last_updated_timestamp_from_df(                                      
-       self, test_df, empty_nc_terraformers_ingestion_s3
-   ):
-       s3 = empty_nc_terraformers_ingestion_s3
-       last_updated_from_df = timestamp_from_df(test_df)
-       test_bucket = "nc-terraformers-ingestion-123"
-       write_df_to_pickle(s3, test_df, "test", test_bucket)
-       response = s3.list_objects_v2(Bucket=test_bucket).get(
-           "Contents"
-       )
-       bucket_files = [file["Key"] for file in response]
-       assert f"{str(last_updated_from_df)}test.pkl" in bucket_files
+    def test_writes_last_updated_timestamp_from_df(
+        self, test_df, empty_nc_terraformers_ingestion_s3
+    ):
+        s3 = empty_nc_terraformers_ingestion_s3
+        last_updated_from_df = timestamp_from_df(test_df)
+        test_bucket = "nc-terraformers-ingestion-123"
+        write_df_to_pickle(s3, test_df, "test", test_bucket)
+        response = s3.list_objects_v2(Bucket=test_bucket).get("Contents")
+        bucket_files = [file["Key"] for file in response]
+        assert f"{str(last_updated_from_df)}test.pkl" in bucket_files
 
 
 class TestTableToDataframe:
@@ -350,7 +354,7 @@ class TestTableToDataframe:
 
 
 class TestTimestampFromDf:
-    
+
     def test_handles_column_not_present(self):
         rows = [[1, 2, 3, 4, 5], [2, 1, "hi", 6, False]]
         columns = ["a", "b", "c", "d", "e"]
@@ -363,21 +367,20 @@ class TestTimestampFromDf:
             )
 
 
-
 class TestLambdaHandler:
-    
+
     def test_return_response_200(self):
-        output = lambda_handler({},[])
-        assert output['response'] == 200
-    
+        output = lambda_handler({}, [])
+        assert output["response"] == 200
+
     def test_lambda_conatints_dict_with_list_of_cvs_files(self):
-        output = lambda_handler({},[])
-        assert isinstance(output["csv_files_written"],dict)
+        output = lambda_handler({}, [])
+        assert isinstance(output["csv_files_written"], dict)
         assert "csv_files_written" in output.keys()
 
     @mock.patch("week1_lambda.get_tables")
-    def test_lambda_raise_exception_error_message(self,mock_conn):
-          mock_conn.side_effect = Exception('error')
-          result = lambda_handler({},[])['response']
-          expected = 500
-          assert result == expected
+    def test_lambda_raise_exception_error_message(self, mock_conn):
+        mock_conn.side_effect = Exception("error")
+        result = lambda_handler({}, [])["response"]
+        expected = 500
+        assert result == expected

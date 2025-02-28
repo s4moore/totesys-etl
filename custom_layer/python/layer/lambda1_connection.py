@@ -16,16 +16,15 @@ def get_db_creds():
     port:pg_port}
     """
 
-    
     secret_name = "totesys-conn"
     region_name = "eu-west-2"
-    logger.info('client connecting')
+    logger.info("client connecting")
     client = boto3.client(service_name="secretsmanager", region_name=region_name)
-    logger.info('client connected')
+    logger.info("client connected")
     try:
-        logger.info('getting secret')
+        logger.info("getting secret")
         get_secret_value_response = client.get_secret_value(SecretId=secret_name)
-        logger.info('got secret')
+        logger.info("got secret")
     except ClientError as e:
         raise e
 
@@ -34,9 +33,9 @@ def get_db_creds():
 
 
 def db_connection():
-    logger.info('getting creds')
+    logger.info("getting creds")
     db_creds = get_db_creds()
-    logger.info('got creds')
+    logger.info("got creds")
     conn = Connection(
         db_creds["username"],
         database=db_creds["dbname"],
@@ -44,5 +43,5 @@ def db_connection():
         host=db_creds["host"],
         port=db_creds["port"],
     )
-    logger.info('got connection')
+    logger.info("got connection")
     return conn

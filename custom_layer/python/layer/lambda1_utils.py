@@ -10,8 +10,9 @@ from datetime import datetime
 
 bucket_name = "terrific-totes-data-team-11"
 
+
 def get_tables(conn):
-    logging.info('makeing sql query')
+    logging.info("makeing sql query")
     data = conn.run(
         """ SELECT table_name 
              FROM information_schema.tables 
@@ -106,7 +107,6 @@ def read_timestamp_from_s3(s3, table):
     """
     try:
         response = s3.list_objects_v2(Bucket=bucket_name)
-        
 
         # if no files return prompt to pull all table data
         if "Contents" not in response:
@@ -117,8 +117,8 @@ def read_timestamp_from_s3(s3, table):
         for item in response["Contents"]:
             if f"{table}." in item["Key"]:
                 matched_files.append(item)
-                
-        logging.info(f'matched files >>> {matched_files}')
+
+        logging.info(f"matched files >>> {matched_files}")
         # if no matched files exist, return prompt to pull all table data
         if not matched_files:
             return {"detail": "No timestamp exists"}
@@ -131,10 +131,10 @@ def read_timestamp_from_s3(s3, table):
             logging.info(item)
             file_name = item["Key"]
             # get the 'YYYY-MM-DD HH24:MI:SS.US' part from the filename'
-            
+
             timestamp_str = file_name.split("/")[0] + " " + file_name.split("/")[1]
             logging.info(timestamp_str)
-            
+
             if most_recent_timestamp is None or timestamp_str > most_recent_timestamp:
                 most_recent_timestamp = timestamp_str
                 most_recent_file = file_name
@@ -208,10 +208,10 @@ def write_df_to_pickle(s3, df, table_name, bucket_name):
                     "result": "Success",
                     "detail": "Converted to pkl, uploaded to ingestion bucket",
                     "key": f"{timestamp}{table_name}.pkl",
-                }   
+                }
     except Exception as e:
         logging.error(e)
-    return {"result": 'Failure'}
+    return {"result": "Failure"}
 
 
 def table_to_dataframe(rows, columns):

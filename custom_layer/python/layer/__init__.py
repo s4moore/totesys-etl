@@ -10,5 +10,5 @@ from .lambda1_utils import (
     table_to_dataframe,
     timestamp_from_df,
     bucket_name,
-    split_time_stamps
+    split_time_stamps,
 )

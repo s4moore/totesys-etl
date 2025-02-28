@@ -9,7 +9,7 @@ from layer import (
     write_df_to_pickle,
     table_to_dataframe,
     timestamp_from_df,
-    bucket_name
+    bucket_name,
 )
 from datetime import datetime
 import json
@@ -33,7 +33,7 @@ def lambda_handler(event, context):
                 "timestamp_json_files_written": timestamp_json_files_written (list)}
     """
     try:
-        conn = db_connection() 
+        conn = db_connection()
         table_names = get_tables(conn)
         s3 = boto3.client("s3")
         csv_files_written = {}
@@ -60,7 +60,7 @@ def lambda_handler(event, context):
         return {
             "response": 200,
             "csv_files_written": csv_files_written,
-            "triggerLambda2": triggerLambda2
+            "triggerLambda2": triggerLambda2,
         }
 
     except Exception as e:
