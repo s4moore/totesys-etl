@@ -1,7 +1,6 @@
 import json
 import boto3
 import pytest
-import logging
 import pandas as pd
 from testfixtures import LogCapture
 from moto import mock_aws
@@ -209,11 +208,10 @@ class TestWriteToS3:
         with LogCapture() as log:
             output = write_to_s3(s3, "test-bucket", "test-file", "pkl", data)
             assert output["result"] == "Failure"
-            assert """root ERROR
-  Parameter validation failed:
-Invalid type for parameter Body, value: True, type: <class 'bool'>, valid types: <class 'bytes'>, <class 'bytearray'>, file-like object""" in str(
-                log
-            )
+            assert "root ERROR\n  Parameter validation failed:\nInvalid " +\
+                "type for parameter Body, value: True, type: <class " +\
+                "'bool'>, valid types: <class 'bytes'>, <class " +\
+                "'bytearray'>, file-like object" in str(log)
 
 
 class TestTimeStamp:
@@ -241,12 +239,10 @@ class TestGetNewRows:
                 conn, "staff", "incorrect timestamp", test_tables
             )
             assert (
-                "{'S': 'ERROR', 'V': 'ERROR', 'C': '22007', 'M': 'invalid " +
-                "value \"inco\" for \"YYYY\"', 'D': 'Value must be an " +
-                "integer.', 'F': 'formatting.c', 'L': '2416', 'R': " + 
-                "'from_char_parse_int_len'}"
-                in str(log)
-            )
+                "{'S': 'ERROR', 'V': 'ERROR', 'C': '22007', 'M': "
+                "'invalid value \"inco\" for \"YYYY\"', 'D': "
+                "'Value must be an integer.', 'F': 'formatting.c',"
+                "'L': '2416', 'R': 'from_char_parse_int_len'}") in str(log)
         assert output == []
 
     def test_returns_data_after_timestamp(self, test_tables):
@@ -258,27 +254,25 @@ class TestGetNewRows:
         format_string = "%Y-%m-%d %H:%M:%S.%f"
         min_time = df["last_updated"].min().to_pydatetime()
         assert min_time >= datetime.strptime(timestamp, format_string)
-        assert type(min_time) == type(
-            datetime.strptime(timestamp, format_string)
-        )
+        assert isinstance(min_time, datetime)
 
     def test_handles_invalid_table_name(self, test_tables):
         conn = db_connection()
         table = "invalid"
         timestamp = "2024-11-14 12:37:09.990000"
-        with LogCapture() as l:
+        with LogCapture() as log:
             output = get_new_rows(conn, table, timestamp, test_tables)
             assert output == []
-            assert "root ERROR\n  Table not found" in str(l)
+            assert "root ERROR\n  Table not found" in str(log)
 
     def test_handles_error(self, test_tables):
         conn = db_connection()
         table = "staff"
         timestamp = "hello"
-        with LogCapture() as l:
+        with LogCapture() as log:
             output = get_new_rows(conn, table, timestamp, test_tables)
             assert output == []
-            assert "root ERROR" in str(l)
+            assert "root ERROR" in str(log)
 
 
 class TestWriteDfToPickle:
@@ -331,11 +325,11 @@ class TestWriteDfToPickle:
         test_df = ""
         test_name = ""
         s3 = empty_nc_terraformers_ingestion_s3
-        with LogCapture() as l:
+        with LogCapture() as log:
             test_bucket = "nc-terraformers-ingestion-123"
             output = write_df_to_pickle(s3, test_df, test_name, test_bucket)
             assert output == {"result": "Failure"}
-            assert "string indices must be integers, not 'str'" in str(l)
+            assert "string indices must be integers, not 'str'" in str(log)
 
     def test_writes_last_updated_timestamp_from_df(
         self, test_df, empty_nc_terraformers_ingestion_s3
@@ -360,10 +354,10 @@ class TestTableToDataframe:
     def test_handles_error(self):
         test_rows = ""
         test_columns = ""
-        with LogCapture() as l:
+        with LogCapture() as log:
             output = table_to_dataframe(test_rows, test_columns)
-            assert output == None
-            assert "DataFrame constructor not properly called!" in str(l)
+            assert output is None
+            assert "DataFrame constructor not properly called!" in str(log)
 
 
 class TestTimestampFromDf:
@@ -372,12 +366,12 @@ class TestTimestampFromDf:
         rows = [[1, 2, 3, 4, 5], [2, 1, "hi", 6, False]]
         columns = ["a", "b", "c", "d", "e"]
         df = pd.DataFrame(rows, columns=columns)
-        with LogCapture() as l:
+        with LogCapture() as log:
             output = timestamp_from_df(df)
-            assert output == None
+            assert output is None
             assert (
                 "root ERROR\n  {'column not found': KeyError('last_updated')}"
-                in str(l)
+                in str(log)
             )
 
 
@@ -388,13 +382,13 @@ class TestLambdaHandler:
         assert output["response"] == 200
 
     def test_lambda_conatints_dict_with_list_of_cvs_files(self):
-        output = lambda_handler({},[])
-        assert isinstance(output["pkl_files_written"],dict)
+        output = lambda_handler({}, [])
+        assert isinstance(output["pkl_files_written"], dict)
         assert "pkl_files_written" in output.keys()
 
     @mock.patch("week1_lambda.get_tables")
-    def test_lambda_raise_exception_error_message(self,mock_conn):
-          mock_conn.side_effect = Exception('error')
-          result = lambda_handler({},[])['response']
-          expected = 500
-          assert result == expected
+    def test_lambda_raise_exception_error_message(self, mock_conn):
+        mock_conn.side_effect = Exception("error")
+        result = lambda_handler({}, [])["response"]
+        expected = 500
+        assert result == expected

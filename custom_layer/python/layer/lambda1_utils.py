@@ -23,7 +23,7 @@ def get_tables(conn):
     logging.info(data)
     # logging.info('made sql query')
     tables_list = [item[0] for item in data if item[0] != "_prisma_migrations"]
-    logging.info(f'Table names created from DB:  {tables_list}')
+    logging.info(f"Table names created from DB:  {tables_list}")
     return tables_list
 
 
@@ -115,7 +115,9 @@ def read_timestamp_from_s3(s3, table):
             if f"{table}." in item["Key"]:
                 matched_files.append(item)
 
-        logging.info(f"Searching for most recent timestamp from {table} with s3 data >>> {matched_files}")
+        logging.info(
+            f"Searching for most recent timestamp from {table} with s3 data >>> {matched_files}"
+        )
         # if no matched files exist, return prompt to pull all table data
         if not matched_files:
             return {"detail": "No timestamp exists"}
@@ -134,7 +136,9 @@ def read_timestamp_from_s3(s3, table):
                 most_recent_timestamp = timestamp_str
                 most_recent_file = file_name
 
-        logging.info(f"most recent timestamp identified as {most_recent_timestamp} from s3")
+        logging.info(
+            f"most recent timestamp identified as {most_recent_timestamp} from s3"
+        )
         return {table: most_recent_timestamp}
 
     except Exception as e:

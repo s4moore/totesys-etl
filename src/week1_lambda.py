@@ -26,7 +26,8 @@ def lambda_handler(event, context):
 
     Returns:
     {"response": 200,
-                "pkl_files_written": {table_name : pkl_file_written, table_name : pkl_file_written}
+                "pkl_files_written": {table_name : pkl_file_written,
+                table_name : pkl_file_written}
     """
     try:
         conn = db_connection()
@@ -52,14 +53,18 @@ def lambda_handler(event, context):
         logger.info(f"Lambda executed at {datetime.now()}", exc_info=True)
         if pkl_files_written == {}:
             triggerLambda2 = False
-            logging.info(f'SUMMARY:  No new data found - No new files saved to s3')
+            logging.info("SUMMARY:  No new data found"
+                         " - No new files saved to s3")
         else:
             triggerLambda2 = True
-            logging.info(f'SUMMARY: New data found - List of files saved to s3: {pkl_files_written}')
+            logging.info(
+                "SUMMARY: New data found - List of files " +
+                f"saved to s3: {pkl_files_written}"
+            )
         return {
             "response": 200,
             "pkl_files_written": pkl_files_written,
-            "triggerLambda2": triggerLambda2
+            "triggerLambda2": triggerLambda2,
         }
 
     except Exception as e:
