@@ -5,7 +5,6 @@ import logging
 import pandas as pd
 from testfixtures import LogCapture
 from moto import mock_aws
-from unittest.mock import patch, Mock
 from unittest import mock
 from datetime import datetime
 from week1_lambda import lambda_handler
@@ -15,7 +14,6 @@ from layer import (
     get_columns,
     write_to_s3,
     get_tables,
-    read_timestamp_from_s3,
     get_new_rows,
     write_df_to_pickle,
     table_to_dataframe,
@@ -173,7 +171,8 @@ class TestWriteToS3:
         s3 = empty_nc_terraformers_ingestion_s3
         data = json.dumps({"test": "data"})
         assert isinstance(
-            write_to_s3(s3, "nc-terraformers-ingestion-123", "test-file", "csv", data),
+            write_to_s3(
+                s3, "nc-terraformers-ingestion-123", "test-file", "csv", data),
             dict,
         )
 
@@ -192,12 +191,13 @@ class TestWriteToS3:
         s3 = boto3.client("s3")
         data = json.dumps({"test": "data"})
 
-        with LogCapture() as l:
-            output = write_to_s3(s3, "non-existant-bucket", "test-file", "csv", data)
+        with LogCapture() as log:
+            output = write_to_s3(
+                s3, "non-existant-bucket", "test-file", "csv", data)
             assert output["result"] == "Failure"
-            assert """root ERROR
-  An error occurred (NoSuchBucket) when calling the PutObject operation: The specified bucket does not exist""" in (
-                str(l)
+            assert 'root ERROR\n  An error occurred (NoSuchBucket) when ' + \
+"calling the PutObject operation: The specified bucket does not exist" in (
+                str(log)
             )
 
     def test_handles_filename_error(self, empty_nc_terraformers_ingestion_s3):
