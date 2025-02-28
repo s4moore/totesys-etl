@@ -34,6 +34,7 @@ def empty_nc_terraformers_ingestion_s3(mocked_aws):
     )
     yield s3
 
+
 @pytest.fixture(scope="function")
 def conn_fixture():
     return db_connection()

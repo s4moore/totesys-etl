@@ -156,13 +156,19 @@ class TestGetColumns:
         result = get_columns(conn, "staff", test_tables)
         assert len(result) == 7
 
+
 class TestWriteToS3:
     def test_returns_dict(self, empty_nc_terraformers_ingestion_s3):
         s3 = empty_nc_terraformers_ingestion_s3
         data = json.dumps({"test": "data"})
         assert isinstance(
             write_to_s3(
-                s3, "nc-terraformers-ingestion-123", "test-file", "csv", data),
+                s3,
+                "nc-terraformers-ingestion-123",
+                "test-file",
+                "csv",
+                data,
+            ),
             dict,
         )
 
@@ -170,7 +176,11 @@ class TestWriteToS3:
         s3 = empty_nc_terraformers_ingestion_s3
         data = json.dumps({"test": "data"})
         output = write_to_s3(
-            s3, "nc-terraformers-ingestion-123", "test-file", "csv", data
+            s3,
+            "nc-terraformers-ingestion-123",
+            "test-file",
+            "csv",
+            data,
         )
         objects = s3.list_objects(Bucket="nc-terraformers-ingestion-123")
         assert objects["Contents"][0]["Key"] == "test-file.csv"
@@ -183,23 +193,26 @@ class TestWriteToS3:
 
         with LogCapture() as log:
             output = write_to_s3(
-                s3, "non-existant-bucket", "test-file", "csv", data)
+                s3, "non-existant-bucket", "test-file", "csv", data
+            )
             assert output["result"] == "Failure"
-            assert 'root ERROR\n  An error occurred (NoSuchBucket) when ' + \
-"calling the PutObject operation: The specified bucket does not exist" in (
-                str(log)
+            assert (
+                "root ERROR\n  An error occurred (NoSuchBucket) when "
+                + "calling the PutObject operation: The specified bucket"
+                + " does not exist"
+                in (str(log))
             )
 
     def test_handles_filename_error(self, empty_nc_terraformers_ingestion_s3):
         data = True
         s3 = empty_nc_terraformers_ingestion_s3
-        with LogCapture() as l:
+        with LogCapture() as log:
             output = write_to_s3(s3, "test-bucket", "test-file", "csv", data)
             assert output["result"] == "Failure"
             assert """root ERROR
   Parameter validation failed:
 Invalid type for parameter Body, value: True, type: <class 'bool'>, valid types: <class 'bytes'>, <class 'bytearray'>, file-like object""" in str(
-                l
+                log
             )
 
 
@@ -214,7 +227,9 @@ class TestTimeStamp:
 class TestGetNewRows:
     def test_returns_list_of_lists(self, test_tables):
         conn = db_connection()
-        output = get_new_rows(conn, "staff", "2013-11-14 10:19:09.990000", test_tables)
+        output = get_new_rows(
+            conn, "staff", "2013-11-14 10:19:09.990000", test_tables
+        )
         assert isinstance(output, list)
         for item in output:
             assert isinstance(item, list)
@@ -222,7 +237,9 @@ class TestGetNewRows:
     def test_handles_incorrect_timestamp(self, test_tables):
         conn = db_connection()
         with LogCapture() as l:
-            output = get_new_rows(conn, "staff", "incorrect timestamp", test_tables)
+            output = get_new_rows(
+                conn, "staff", "incorrect timestamp", test_tables
+            )
             assert (
                 """{'S': 'ERROR', 'V': 'ERROR', 'C': '22007', 'M': 'invalid value "inco" for "YYYY"', 'D': 'Value must be an integer.', 'F': 'formatting.c', 'L': '2416', 'R': 'from_char_parse_int_len'}"""
                 in str(l)
@@ -238,7 +255,9 @@ class TestGetNewRows:
         format_string = "%Y-%m-%d %H:%M:%S.%f"
         min_time = df["last_updated"].min().to_pydatetime()
         assert min_time >= datetime.strptime(timestamp, format_string)
-        assert type(min_time) == type(datetime.strptime(timestamp, format_string))
+        assert type(min_time) == type(
+            datetime.strptime(timestamp, format_string)
+        )
 
     def test_handles_invalid_table_name(self, test_tables):
         conn = db_connection()
@@ -278,12 +297,12 @@ class TestWriteDfToPickle:
         test_bucket = "nc-terraformers-ingestion-123"
         write_df_to_pickle(client, test_staff_df, test_name, test_bucket)
         response = client.list_objects_v2(Bucket=test_bucket).get("Contents")
-        bucket_files = [
-            file["Key"] for file in response
-        ]
+        bucket_files = [file["Key"] for file in response]
         if len(bucket_files) >= 1:
-            get_file = client.get_object(Bucket=test_bucket, Key=bucket_files[0])
-            assert get_file["ContentType"] == 'binary/octet-stream'
+            get_file = client.get_object(
+                Bucket=test_bucket, Key=bucket_files[0]
+            )
+            assert get_file["ContentType"] == "binary/octet-stream"
 
     def test_uploads_to_s3_bucket(
         self, test_staff_df, empty_nc_terraformers_ingestion_s3
@@ -291,7 +310,9 @@ class TestWriteDfToPickle:
         test_name = "staff"
         client = empty_nc_terraformers_ingestion_s3
         test_bucket = "nc-terraformers-ingestion-123"
-        output = write_df_to_pickle(client, test_staff_df, test_name, test_bucket)
+        output = write_df_to_pickle(
+            client, test_staff_df, test_name, test_bucket
+        )
         assert output == {
             "result": "Success",
             "detail": "Converted to pkl, uploaded to ingestion bucket",
@@ -352,7 +373,8 @@ class TestTimestampFromDf:
             output = timestamp_from_df(df)
             assert output == None
             assert (
-                "root ERROR\n  {'column not found': KeyError('last_updated')}" in str(l)
+                "root ERROR\n  {'column not found': KeyError('last_updated')}"
+                in str(l)
             )
 
 
@@ -373,7 +395,7 @@ class TestLambdaHandler:
         result = lambda_handler({}, [])["response"]
         expected = 500
         assert result == expected
-    
+
     def test_lambda_executed_timestamp_logger(self, caplog):
         with caplog.at_level(logging.INFO):
             lambda_handler({}, [])
