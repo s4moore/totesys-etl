@@ -55,8 +55,10 @@ def lambda_handler(event, context):
         logger.info(f"Lambda executed at {datetime.now()}", exc_info=True)
         if csv_files_written == {}:
             triggerLambda2 = False
+            logging.info(f'SUMMARY:  No new data found - No new files saved to s3')
         else:
             triggerLambda2 = True
+            logging.info(f'SUMMARY: New data found - List of files saved to s3: {csv_files_written}')
         return {
             "response": 200,
             "csv_files_written": csv_files_written,

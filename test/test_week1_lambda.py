@@ -375,7 +375,7 @@ class TestLambdaHandler:
         assert isinstance(output["csv_files_written"],dict)
         assert "csv_files_written" in output.keys()
 
-    @mock.patch("src.week1_lambda.get_tables")
+    @mock.patch("week1_lambda.get_tables")
     def test_lambda_raise_exception_error_message(self,mock_conn):
           mock_conn.side_effect = Exception('error')
           result = lambda_handler({},[])['response']
