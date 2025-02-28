@@ -34,18 +34,6 @@ def empty_nc_terraformers_ingestion_s3(mocked_aws):
     )
     yield s3
 
-
-# @pytest.fixture(scope="function")
-# def s3_bkt():
-#     s3 = boto3.client("s3")
-#     test_bucket = "nc-terraformers-ingestion-123"
-#     s3.create_bucket(
-#         Bucket=test_bucket,
-#         CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
-#     )
-#     yield s3
-
-
 @pytest.fixture(scope="function")
 def conn_fixture():
     return db_connection()

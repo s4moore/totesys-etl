@@ -67,12 +67,10 @@ def test_returns_no_data_found(aws_credentials):
 logger = logging.getLogger(__name__)
 
 
-def test_returns_logging(aws_credentials):
-    with mock_aws():
+def test_returns_error_logging(empty_nc_terraformers_ingestion_s3, caplog):
+    with caplog.at_level(logging.INFO):
         logger.info("testing now")
-        s3 = boto3.client("s3")
-        s3.create_bucket(Bucket=bucket_name)
 
-        x = read_timestamp_from_s3(s3client, table="customers")
+        x = read_timestamp_from_s3(empty_nc_terraformers_ingestion_s3, table="customers")
 
-    assert x == {"detail": "No timestamp exists"}
+        assert "Unexpected error whilst collecting timestamp" in caplog.text
