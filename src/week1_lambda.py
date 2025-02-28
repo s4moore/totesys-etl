@@ -8,7 +8,8 @@ from layer import (
     get_new_rows,
     write_df_to_pickle,
     table_to_dataframe,
-    timestamp_from_df
+    timestamp_from_df,
+    bucket_name
 )
 from datetime import datetime
 import json
@@ -46,7 +47,7 @@ def lambda_handler(event, context):
 
             if rows != []:
                 df = table_to_dataframe(rows, columns)
-                csv_key = write_df_to_pickle(s3, df, table)["key"]
+                csv_key = write_df_to_pickle(s3, df, table, bucket_name)["key"]
                 csv_files_written[table] = csv_key
             else:
                 logging.info(f"No new data in table {table} to upload.")

@@ -106,6 +106,7 @@ def read_timestamp_from_s3(s3, table):
     """
     try:
         response = s3.list_objects_v2(Bucket=bucket_name)
+        
 
         # if no files return prompt to pull all table data
         if "Contents" not in response:
