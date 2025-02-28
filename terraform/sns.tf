@@ -1,4 +1,6 @@
-variable "EMAIL" {}
+variable "EMAIL" {
+  type = string
+}
 
 # injest lambda sns
 resource "aws_sns_topic" "injest_lambda" {

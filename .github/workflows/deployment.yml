@@ -4,9 +4,7 @@ on:
   push:
     branches:
       - main
-# env:
-#   TF_VAR_EMAIL: ${{ secrets.EMAIL }}
-
+      
 jobs:
 
   run-tests:
@@ -29,8 +27,6 @@ jobs:
   deploy-lambda:
     name: deploy-lambda
     runs-on: ubuntu-latest
-    env:
-      TF_VAR_EMAIL: ${{ secrets.EMAIL }}
     needs: run-tests
     environment: dev
     steps:
@@ -46,8 +42,6 @@ jobs:
 
     - name: Setup terraform
       uses: hashicorp/setup-terraform@v3
-      # with:
-      #   TF_VAR_EMAIL: ${{ env.TF_VAR_EMAIL }}
 
     - name: Terraform init
       working-directory: ./terraform
@@ -56,6 +50,8 @@ jobs:
     - name: Terraform plan
       working-directory: ./terraform
       run: terraform plan
+      env:
+        TF_VAR_EMAIL: ${{ secrets.TF_VAR_EMAIL }}
     # terraform fmt
     - name: Terraform format
       working-directory: ./terraform
@@ -64,5 +60,5 @@ jobs:
     - name: Terraform apply
       working-directory: ./terraform
       run: terraform apply -auto-approve
-      # env:
-      #   TF_VAR_EMAIL: ${{ secrets.TF_VAR_EMAIL }}
+      env:
+        TF_VAR_EMAIL: ${{ secrets.TF_VAR_EMAIL }}
