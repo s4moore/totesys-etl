@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - main
-env:
-  TF_VAR_EMAIL: ${{ secrets.EMAIL }}
+# env:
+#   TF_VAR_EMAIL: ${{ secrets.EMAIL }}
 
 jobs:
 
@@ -29,6 +29,8 @@ jobs:
   deploy-lambda:
     name: deploy-lambda
     runs-on: ubuntu-latest
+    env:
+      TF_VAR_EMAIL: ${{ secrets.EMAIL }}
     needs: run-tests
     environment: dev
     steps:
