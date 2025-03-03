@@ -21,17 +21,6 @@ from layer import (
 )
 from pg8000.native import Connection
 
-
-@pytest.fixture(scope="function")
-def test_df():
-    test_rows = [
-        [True, datetime(2022, 11, 3, 14, 20, 51, 563000)],
-        [True, datetime(2023, 11, 3, 14, 20, 51, 563000)],
-    ]
-    test_columns = ["column1", "last_updated"]
-    return pd.DataFrame(test_rows, columns=test_columns)
-
-
 @pytest.fixture(scope="function")
 def test_staff_df():
     rows = [
