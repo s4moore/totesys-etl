@@ -3,7 +3,7 @@ resource "aws_cloudwatch_log_group" "totes404TerraformGroup_2" {
   
 }
 resource "aws_cloudwatch_metric_alarm" "error_raise_2" {
-    alarm_name = "totes404DataError"
+    alarm_name = "totes404DataError_2"
     comparison_operator = "GreaterThanOrEqualToThreshold"
     evaluation_periods = 1
     metric_name = "Errors"
@@ -20,12 +20,12 @@ resource "aws_cloudwatch_metric_alarm" "error_raise_2" {
 
 
 resource "aws_cloudwatch_log_metric_filter" "metricFilterResource_2" {
-    name = "ErrorFilter"
+    name = "ErrorFilter_2"
     pattern = "ERROR"
     log_group_name = aws_cloudwatch_log_group.totes404TerraformGroup_2.name
 
     metric_transformation {
-      name = "TotesEvent"
+      name = "TotesEvent_2"
       namespace = "Totes/Errors"
       value = "1"
     }

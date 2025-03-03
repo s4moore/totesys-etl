@@ -1,7 +1,3 @@
-variable "EMAIL" {
-  type = string
-}
-
 # transform lambda sns
 resource "aws_sns_topic" "transform_lambda" {
   name = "transform_lambda_topic"

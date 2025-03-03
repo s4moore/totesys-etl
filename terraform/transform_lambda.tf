@@ -14,7 +14,7 @@ module "lambda_function_2" {
     Name = "transform_lambda"
   }
 
-  layers = ["arn:aws:lambda:eu-west-2:336392948345:layer:AWSSDKPandas-Python312:16",aws_lambda_layer_version.dependencies.arn, aws_lambda_layer_version.custom_layer.arn]
+  layers = ["arn:aws:lambda:eu-west-2:336392948345:layer:AWSSDKPandas-Python312:16",aws_lambda_layer_version.dependencies.arn, aws_lambda_layer_version.custom_layer_2.arn]
 
   allowed_triggers = {
     EventBridgeScheduler = {
@@ -25,7 +25,7 @@ module "lambda_function_2" {
 
   attach_policy_statements = true
 
-  role_name = "lambda_role"
+  role_name = "lambda_role_2"
 
   policy_statements = {
       s3_read_write = {
