@@ -1,4 +1,4 @@
-module "lambda_function" {
+module "lambda_function_2" {
   source = "terraform-aws-modules/lambda/aws"
 
   function_name = "transform_lambda"
