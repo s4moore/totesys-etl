@@ -9,9 +9,9 @@ resource "aws_sfn_state_machine" "step_function_totes" {
 {
   "QueryLanguage": "JSONPath",
   "Comment": "A description of my state machine",
-  "StartAt": "Injest Lambda Invoke",
+  "StartAt": "ingest Lambda Invoke",
   "States": {
-    "Injest Lambda Invoke": {
+    "ingest Lambda Invoke": {
       "Type": "Task",
       "Resource": "arn:aws:states:::lambda:invoke",
       "OutputPath": "$.Payload",
@@ -93,7 +93,7 @@ resource "aws_iam_role" "iam_for_step_machine" {
         Effect = "Allow"
         Sid    = ""
         Principal = {
-          Service = "ec2.amazonaws.com"
+          Service = "states.amazonaws.com"
         }
       },
     ]
