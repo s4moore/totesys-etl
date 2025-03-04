@@ -40,11 +40,6 @@ module "lambda_function_2" {
         effect    = "Allow",
         actions   = ["logs:*"],
         resources = ["arn:aws:logs:*"],
-      },
-        read_secrets = {
-        effect    = "Allow",
-        actions   = ["secretsmanager:GetSecretValue"],
-        resources = ["*"]
       }
     }
 }
