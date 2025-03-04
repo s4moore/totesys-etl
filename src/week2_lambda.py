@@ -20,7 +20,7 @@ import boto3
 logger = logging.getLogger()
 logger.setLevel("INFO")
 
-db_name = DB_NAME
+db_name = "load_db"
 bucket_name = "totes-11-processed-data"
 
 def lambda_handler(event, context):
