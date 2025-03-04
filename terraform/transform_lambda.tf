@@ -16,13 +16,6 @@ module "lambda_function_2" {
 
   layers = ["arn:aws:lambda:eu-west-2:336392948345:layer:AWSSDKPandas-Python312:16",aws_lambda_layer_version.dependencies.arn, aws_lambda_layer_version.custom_layer_2.arn]
 
-  allowed_triggers = {
-    EventBridgeScheduler = {
-      principal  = "events.amazonaws.com"
-      source_arn = aws_cloudwatch_event_rule.every_20_min.arn
-    }
-  }
-
   attach_policy_statements = true
 
   role_name = "lambda_role_2"
@@ -31,17 +24,17 @@ module "lambda_function_2" {
       s3_read_write = {
         effect    = "Allow",
         actions   = ["s3:PutObject", "s3:GetObject"],
-        resources = ["${aws_s3_bucket.terrific-totes-processed.arn}/*"]
+        resources = ["${aws_s3_bucket.terrific-totes-processed.arn}/*","${aws_s3_bucket.terrific-totes-data.arn}/*"]
       },
       s3_read = {
         effect    = "Allow",
         actions   = ["s3:List*"],
-        resources = ["${aws_s3_bucket.terrific-totes-processed.arn}"]
+        resources = ["${aws_s3_bucket.terrific-totes-processed.arn}", "${aws_s3_bucket.terrific-totes-data.arn}"]
       },
       deny_delete_s3 = {
         effect = "Deny",
         actions = ["s3:Delete*"],
-        resources = ["${aws_s3_bucket.terrific-totes-processed.arn}/*"]
+        resources = ["${aws_s3_bucket.terrific-totes-processed.arn}/*", "${aws_s3_bucket.terrific-totes-data.arn}/*"]
       },
       cw_full_access = {
         effect    = "Allow",
