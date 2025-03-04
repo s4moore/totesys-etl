@@ -1,18 +1,18 @@
-from layer2 import (
+from layer import (
     convert_to_parquet,
     upload_to_processing_bucket,
 )
-from layer2 import dim_counterparty
-from layer2 import dim_currency
-from layer2 import dim_date
-from layer2 import dim_design
-from layer2 import dim_location
-from layer2 import create_dim_staff
-from layer2 import fact_sales_order
-from layer2 import get_latest_file_as_df
-from layer2 import collate_pkl_into_df, check_for_dim_date
+from layer import dim_counterparty
+#from layer2 import dim_currency
+from layer import dim_date
+from layer import dim_design
+from layer import dim_location
+from layer import create_dim_staff
+from layer import fact_sales_order
+from layer import get_latest_file_as_df
+from layer import collate_pkl_into_df, check_for_dim_date
 
-from layer2 import get_data, load_df_to_s3, tranform_file_into_df
+from layer import get_data, load_df_to_s3, tranform_file_into_df
 
 from datetime import datetime
 import logging
@@ -85,15 +85,15 @@ def lambda_handler(event, context):
                     logging.info(
                         f"{pkl_files_written[table]} transformed into {pq_dict}"
                     )
-                case "currency":
-                    logging.info("currency data transformation beginning")
-                    currency_df = tranform_file_into_df(pkl_files_written[table], bucket_name)
-                    dim_currency_df = dim_currency(currency_df)
-                    pq_dict = load_df_to_s3(dim_currency_df,bucket_name, db_name,"dim_currency")
-                    parquet_files_written.update(pq_dict)
-                    logging.info(
-                        f"{pkl_files_written[table]} transformed into {pq_dict}"
-                    )
+                #case "currency":
+                #    logging.info("currency data transformation beginning")
+                #    currency_df = tranform_file_into_df(pkl_files_written[table], bucket_name)
+                #    dim_currency_df = dim_currency(currency_df)
+                #    pq_dict = load_df_to_s3(dim_currency_df,bucket_name, db_name,"dim_currency")
+                #    parquet_files_written.update(pq_dict)
+                #    logging.info(
+                #        f"{pkl_files_written[table]} transformed into {pq_dict}"
+                #    )
                 case "counterparty":
                     logging.info("counterparty data transformation beginning")
                     counter_df = tranform_file_into_df(pkl_files_written[table], bucket_name)
