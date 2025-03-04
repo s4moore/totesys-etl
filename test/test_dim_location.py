@@ -1,4 +1,4 @@
-from src.dim_location import dim_location
+from layer2 import dim_location
 import pytest
 import pandas as pd
 from testfixtures import LogCapture

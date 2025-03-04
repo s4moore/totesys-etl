@@ -1,4 +1,4 @@
-from src.fact_sales_order import fact_sales_order
+from layer2 import fact_sales_order
 from testfixtures import LogCapture
 import pandas as pd
 

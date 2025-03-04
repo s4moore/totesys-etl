@@ -1,4 +1,4 @@
-from src.dim_counterparty import dim_counterparty
+from layer2 import dim_counterparty
 import pandas as pd
 import pytest
 from testfixtures import LogCapture

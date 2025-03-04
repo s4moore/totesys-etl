@@ -1,4 +1,4 @@
-from src.dim_staff import create_dim_staff
+from layer2 import create_dim_staff
 from testfixtures import LogCapture
 import pandas as pd
 import pytest

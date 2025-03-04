@@ -1,4 +1,4 @@
-from src.layer.lambda1_utils import read_timestamp_from_s3, bucket_name
+from layer import read_timestamp_from_s3, bucket_name
 import pytest
 import boto3
 import os
