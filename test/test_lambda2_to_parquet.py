@@ -1,4 +1,4 @@
-from src.layer.lambda2_to_parquet import load_df_to_s3
+from layer2 import load_df_to_s3
 import logging
 
 

@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
 from datetime import datetime
-from src.dim_date_table import dim_date
+from layer2 import dim_date
 
 
 class TestDateTable:

@@ -1,16 +1,17 @@
-from src.convert_to_parquet_and_upload import (
+from layer2 import (
     convert_to_parquet,
     upload_to_processing_bucket,
 )
-from src.dim_counterparty import dim_counterparty
-from src.dim_currency import dim_currency
-from src.dim_date_table import dim_date
-from src.dim_design import dim_design
-from src.dim_location import dim_location
-from src.dim_staff import create_dim_staff
-from src.fact_sales_order import fact_sales_order
-from src.get_latest_file_as_df import get_latest_file_as_df
-from src.utils import collate_pkl_into_df, check_for_dim_date
+from layer2 import dim_counterparty
+from layer2 import dim_currency
+from layer2 import dim_date
+from layer2 import dim_design
+from layer2 import dim_location
+from layer2 import create_dim_staff
+from layer2 import fact_sales_order
+from layer2 import get_latest_file_as_df
+from layer2 import collate_pkl_into_df, check_for_dim_date
+
 from layer2 import get_data, load_df_to_s3, tranform_file_into_df
 
 from datetime import datetime
@@ -21,6 +22,8 @@ logger = logging.getLogger()
 logger.setLevel("INFO")
 
 db_name = "load_db"
+
+
 bucket_name = "totes-11-processed-data"
 
 def lambda_handler(event, context):
@@ -115,4 +118,6 @@ def lambda_handler(event, context):
 
     except Exception as e:
         logging.error(e)
+
         return {"error": e}
+

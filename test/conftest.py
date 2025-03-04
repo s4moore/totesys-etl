@@ -4,7 +4,7 @@ import boto3
 from datetime import datetime
 import pandas as pd
 from moto import mock_aws
-from src.layer import db_connection
+from layer import db_connection
 
 
 @pytest.fixture(scope="function")

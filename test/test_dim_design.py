@@ -1,4 +1,4 @@
-from src.dim_design import dim_design
+from layer2 import dim_design
 from testfixtures import LogCapture
 import pandas as pd
 

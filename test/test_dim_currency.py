@@ -1,4 +1,4 @@
-from src.dim_currency import dim_currency
+from layer2 import dim_currency
 import pytest
 import pandas as pd
 from testfixtures import LogCapture
