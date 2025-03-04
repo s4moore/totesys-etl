@@ -83,8 +83,6 @@ EOF
 resource "aws_iam_role" "iam_for_step_machine" {
   name = "step_machine_role"
 
-  # Terraform's "jsonencode" function converts a
-  # Terraform expression result to valid JSON syntax.
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -108,8 +106,7 @@ resource "aws_iam_policy" "step_func_policy" {
   path        = "/"
   description = "step_funcpolicy"
 
-  # Terraform's "jsonencode" function converts a
-  # Terraform expression result to valid JSON syntax.
+
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
