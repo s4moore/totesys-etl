@@ -26,18 +26,18 @@ def load_df_to_s3(df, bucket_name, db_name, table):
     
     try:
 
-        wr.s3.to_parquet(
-        df=df,
-        path=f"s3://{bucket_name}/{table}", # not sure if the folder is needed as maybe metadata is enough
-        dataset=True,
-        mode="overwrite_partitions", # overwrittes any duplicates by last_updated
-        partition_cols=["last_updated"],
-        database=db_name,
-        table=table # metadata for glue
-    )
+        pq_dict = wr.s3.to_parquet(
+            df=df,
+            path=f"s3://{bucket_name}/{table}", # not sure if the folder is needed as maybe metadata is enough
+            dataset=True,
+            mode="overwrite_partitions", # overwrittes any duplicates by last_updated
+            partition_cols=["last_updated"],
+            database=db_name,
+            table=table # metadata for glue
+        )
     
         logging.info("Upload successful")
-
+        return pq_dict
     except Exception as e:
         logging.error(f"Unexpected error whilst loading parquet files to s3: {e}")
 

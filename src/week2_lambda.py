@@ -11,6 +11,7 @@ from layer2 import create_dim_staff
 from layer2 import fact_sales_order
 from layer2 import get_latest_file_as_df
 from layer2 import collate_pkl_into_df, check_for_dim_date
+
 from layer2 import get_data, load_df_to_s3, tranform_file_into_df
 
 from datetime import datetime
@@ -20,7 +21,9 @@ import boto3
 logger = logging.getLogger()
 logger.setLevel("INFO")
 
-db_name = DB_NAME
+db_name = "load_db"
+
+
 bucket_name = "totes-11-processed-data"
 
 def lambda_handler(event, context):
@@ -115,4 +118,6 @@ def lambda_handler(event, context):
 
     except Exception as e:
         logging.error(e)
+
         return {"error": e}
+
