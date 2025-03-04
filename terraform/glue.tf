@@ -7,32 +7,32 @@ resource "aws_glue_catalog_database" "load_db" {
 # basic tables
 resource "aws_glue_catalog_table" "fact_sales_order" {
   name          = "fact_sales_order"
-  database_name = aws_glue_catalog_database.transform_db.name
+  database_name = aws_glue_catalog_database.load_db.name
 }
 
 resource "aws_glue_catalog_table" "dim_staff" {
   name          = "dim_staff"
-  database_name = aws_glue_catalog_database.transform_db.name
+  database_name = aws_glue_catalog_database.load_db.name
 }
 
 resource "aws_glue_catalog_table" "dim_location" {
   name          = "dim_location"
-  database_name = aws_glue_catalog_database.transform_db.name
+  database_name = aws_glue_catalog_database.load_db.name
 }
 
 resource "aws_glue_catalog_table" "dim_design" {
   name          = "dim_design"
-  database_name = aws_glue_catalog_database.transform_db.name
+  database_name = aws_glue_catalog_database.load_db.name
 }
 
 resource "aws_glue_catalog_table" "dim_currency" {
   name          = "dim_currency"
-  database_name = aws_glue_catalog_database.transform_db.name
+  database_name = aws_glue_catalog_database.load_db.name
 }
 
 resource "aws_glue_catalog_table" "dim_counterparty"{
   name          = "dim_counterparty"
-  database_name = aws_glue_catalog_database.transform_db.name
+  database_name = aws_glue_catalog_database.load_db.name
 }
 
 #parquet table for athena - if needed at a later stage
