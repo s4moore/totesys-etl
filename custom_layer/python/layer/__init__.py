@@ -12,6 +12,5 @@ from .lambda1_utils import (
     bucket_name,
     split_time_stamps,
 )
-from .get_data import get_data, tranform_file_into_df
 
 
