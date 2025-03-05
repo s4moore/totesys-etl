@@ -113,7 +113,7 @@ def lambda_handler(event, context):
         return {"response": 200, "parquet_files_written": parquet_files_written}
 
     except Exception as e:
-        logging.error(e)
+        logging.error(f"Error running transform Lambda: {e}")
 
         return {"error": e}
 
