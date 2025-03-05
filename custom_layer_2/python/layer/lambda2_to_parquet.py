@@ -33,7 +33,8 @@ def load_df_to_s3(df, bucket_name, db_name, table):
             mode="overwrite_partitions", # overwrittes any duplicates by last_updated
             partition_cols=["last_updated"],
             database=db_name,
-            table=table # metadata for glue
+            table=table, # metadata for glue
+            sanitize_columns=True
         )
     
         logging.info("Upload successful")
