@@ -40,6 +40,11 @@ module "lambda_function_2" {
         effect    = "Allow",
         actions   = ["logs:*"],
         resources = ["arn:aws:logs:*"],
+      },
+      glue_full_access = {
+        effect    = "Allow",
+        actions   = ["glue:*"],
+        resources = ["${aws_glue_catalog_database.load_db.arn}/*", "${aws_glue_catalog_database.load_db.arn}", "arn:aws:glue:eu-west-2:442426868881:*"]
       }
     }
 }
