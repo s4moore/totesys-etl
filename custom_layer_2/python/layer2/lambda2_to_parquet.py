@@ -30,10 +30,20 @@ def load_df_to_s3(df, bucket_name, db_name, table):
             df=df,
             path=f"s3://{bucket_name}/{table}", # not sure if the folder is needed as maybe metadata is enough
             dataset=True,
-            mode="overwrite_partitions", # overwrittes any duplicates by last_updated
-            partition_cols=["last_updated"],
+            dtype={"sales_order_id": "int", 
+                   "created_date": "date", 
+                   "sales_staff_id": "int", 
+                   "counterparty_id": "int", 
+                   "units_sold": "int", 
+                   "unit_price": "float", 
+                   "currency_id": "string", 
+                   "design_id": "int", 
+                   "agreed_delivery_location_id": "int"},
+            # mode="overwrite_partitions", # overwrittes any duplicates by last_updated
+            # partition_cols=["last_updated"], # NEEDS TO CHANGE
             database=db_name,
             table=table # metadata for glue
+            # sanitize_columns=True
         )
     
         logging.info("Upload successful")

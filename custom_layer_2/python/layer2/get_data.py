@@ -6,7 +6,7 @@ import io
 import pickle
 
 
-def get_data(bucket_name="terrific-totes-data-team-11-new"):
+def get_data(bucket_name="terrific-totes-data-team-11"):
     """
     Get data from s3 bucket
         Given an s3 bucket this funtion reads all the items and returns a dictionary with the file names

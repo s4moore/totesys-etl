@@ -1,32 +1,29 @@
-<<<<<<< HEAD
 # from layer import (
 #     convert_to_parquet,
-#     upload_to_processing_bucket,
-# )
+# #     upload_to_processing_bucket,
+# # )
 from layer2 import dim_counterparty
-from layer2 import dim_currency
-from layer2 import dim_date
+# from layer2 import dim_currency
+# from layer2 import dim_date
 from layer2 import dim_design
 from layer2 import dim_location
 from layer2 import create_dim_staff
 from layer2 import fact_sales_order
-# from layer import get_latest_file_as_df
-# from layer import collate_pkl_into_df, check_for_dim_date
+# # from layer import get_latest_file_as_df
+# # from layer import collate_pkl_into_df, check_for_dim_date
 
-from layer2 import get_data, load_df_to_s3, tranform_file_into_df
-=======
-from layer import dim_counterparty
-#from layer2 import dim_currency
-# from layer import dim_date
-from layer import dim_design
-from layer import dim_location
-from layer import create_dim_staff
-from layer import fact_sales_order
-# from layer import get_latest_file_as_df
-# from layer import collate_pkl_into_df, check_for_dim_date
+# # from layer2 import get_data, load_df_to_s3, tranform_file_into_df
+# from layer import dim_counterparty
+# #from layer2 import dim_currency
+# # from layer import dim_date
+# from layer import dim_design
+# from layer import dim_location
+# from layer import create_dim_staff
+# from layer import fact_sales_order
+# # from layer import get_latest_file_as_df
+# # from layer import collate_pkl_into_df, check_for_dim_date
 
 from layer import load_df_to_s3, tranform_file_into_df
->>>>>>> 2b00f88a5a962d9d3c17c26f8ac62109b16eebed
 
 from datetime import datetime
 import logging
