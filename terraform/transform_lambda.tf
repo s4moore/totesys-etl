@@ -32,9 +32,9 @@ module "lambda_function_2" {
         resources = ["${aws_s3_bucket.terrific-totes-processed.arn}", "${aws_s3_bucket.terrific-totes-data.arn}"]
       },
       deny_delete_s3 = {
-        effect = "Deny",
+        effect = "Allow",
         actions = ["s3:Delete*"],
-        resources = ["${aws_s3_bucket.terrific-totes-processed.arn}/*", "${aws_s3_bucket.terrific-totes-data.arn}/*"]
+        resources = ["${aws_s3_bucket.terrific-totes-processed.arn}/*"]
       },
       cw_full_access = {
         effect    = "Allow",

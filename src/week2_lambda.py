@@ -3,7 +3,7 @@
 # #     upload_to_processing_bucket,
 # # )
 from layer2 import dim_counterparty
-# from layer2 import dim_currency
+from layer2 import dim_currency
 # from layer2 import dim_date
 from layer2 import dim_design
 from layer2 import dim_location
