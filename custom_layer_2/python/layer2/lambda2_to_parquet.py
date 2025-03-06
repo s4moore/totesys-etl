@@ -25,7 +25,7 @@ def load_df_to_s3(df, bucket_name, db_name, table):
     logging.info(f"Transforming dataframe into parquet and loading to s3 bucket {bucket_name}/{table} in progress...")
     
     try:
-        partition = ["last_updated_date"] if table == "fact_sales_order" else None
+        # partition = ["last_updated_date"] if table == "fact_sales_order" else None
         pq_dict = wr.s3.to_parquet(
             df=df,
             path=f"s3://{bucket_name}/{table}", # not sure if the folder is needed as maybe metadata is enough
@@ -40,7 +40,7 @@ def load_df_to_s3(df, bucket_name, db_name, table):
             #       "design_id": "int", 
             #       "agreed_delivery_location_id": "int"},
             #mode="overwrite_partitions", # overwrittes any duplicates by last_updated
-            partition_cols=["last_updated_date"], # NEEDS TO CHANGE
+            # partition_cols=["last_updated_date"], # NEEDS TO CHANGE
             database=db_name,
             table=table # metadata for glue
             # sanitize_columns=True

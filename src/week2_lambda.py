@@ -9,8 +9,9 @@ from layer2 import dim_design
 from layer2 import dim_location
 from layer2 import create_dim_staff
 from layer2 import fact_sales_order
-# # from layer import get_latest_file_as_df
-# # from layer import collate_pkl_into_df, check_for_dim_date
+# # from layer import get_latest_file_as_df, collate_pkl_into_df
+from layer2 import check_for_dim_date
+from layer2 import dim_date
 
 # # from layer2 import get_data, load_df_to_s3, tranform_file_into_df
 # from layer import dim_counterparty
@@ -100,7 +101,7 @@ def lambda_handler(event, context):
                     )
                 case "currency":
                    logging.info("currency data transformation beginning")
-                   currency_df = tranform_file_into_df(pkl_files_written[table], bucket_name)
+                   currency_df = tranform_file_into_df(pkl_files_written[table], data_bucket)
                    dim_currency_df = dim_currency(currency_df)
                    pq_dict = load_df_to_s3(dim_currency_df,bucket_name, db_name,"dim_currency")
                    parquet_files_written.update(pq_dict)
@@ -120,12 +121,12 @@ def lambda_handler(event, context):
                 case v:
                     logging.warning(f"Unexpected input in event: {v}")
 
-        # if not check_for_dim_date(s3):
-        #     logging.info("creating dim_date")
-        #     dim_date_df = dim_date()
-        #     pq_dict = load_df_to_s3(dim_date_df, bucket_name, db_name,"dim_date")
-        #     parquet_files_written.update(pq_dict)
-        #     logging.info(f"{pq_dict} written to bucket")
+        if not check_for_dim_date(s3):
+            logging.info("creating dim_date")
+            dim_date_df = dim_date()
+            pq_dict = load_df_to_s3(dim_date_df, bucket_name, db_name,"dim_date")
+            parquet_files_written.update(pq_dict)
+            logging.info(f"{pq_dict} written to bucket")
         return {"response": 200, "parquet_files_written": parquet_files_written}
 
     except Exception as e:

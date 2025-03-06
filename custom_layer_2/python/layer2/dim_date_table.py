@@ -17,3 +17,13 @@ def dim_date(start="2000-01-01", end="2025-12-31"):
     df["month_name"] = df.date_id.dt.month_name()
     df["quarter"] = df.date_id.dt.quarter
     return df
+
+def check_for_dim_date(s3):
+    response = s3.list_objects_v2(Bucket='totes-11-processed-data')
+    list_of_files = [thing['Key'] for thing in response['Contents']]
+    isinlist = False
+    for filename in list_of_files:
+        if 'dim_date' in filename:
+            isinlist = True
+            break
+    return isinlist
