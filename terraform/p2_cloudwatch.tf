@@ -1,9 +1,5 @@
-resource "aws_cloudwatch_log_group" "totes404TerraformGroup_2" {
-    name = "/aws/lambda/${module.lambda_function_2.lambda_function_name}-phase-2"
-  
-}
 resource "aws_cloudwatch_metric_alarm" "error_raise_2" {
-    alarm_name = "totes404DataError_2"
+    alarm_name = "transform_lambda_error"
     comparison_operator = "GreaterThanOrEqualToThreshold"
     evaluation_periods = 1
     metric_name = "Errors"
@@ -22,7 +18,7 @@ resource "aws_cloudwatch_metric_alarm" "error_raise_2" {
 resource "aws_cloudwatch_log_metric_filter" "metricFilterResource_2" {
     name = "ErrorFilter_2"
     pattern = "ERROR"
-    log_group_name = aws_cloudwatch_log_group.totes404TerraformGroup_2.name
+    log_group_name = "/aws/lambda/transform_lambda"
 
     metric_transformation {
       name = "TotesEvent_2"
