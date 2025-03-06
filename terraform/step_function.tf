@@ -9,15 +9,15 @@ resource "aws_sfn_state_machine" "step_function_totes" {
 {
   "QueryLanguage": "JSONPath",
   "Comment": "A description of my state machine",
-  "StartAt": "ingest Lambda Invoke",
+  "StartAt": "Injest Lambda Invoke",
   "States": {
-    "ingest Lambda Invoke": {
+    "Injest Lambda Invoke": {
       "Type": "Task",
       "Resource": "arn:aws:states:::lambda:invoke",
       "OutputPath": "$.Payload",
       "Parameters": {
         "Payload.$": "$",
-        "FunctionName": "arn:aws:lambda:eu-west-2:442426868881:function:ingest_lambda:$LATEST"
+        "FunctionName": "arn:aws:lambda:eu-west-2:442426868881:function:injest_lambda:$LATEST"
       },
       "Retry": [
         {
@@ -57,6 +57,30 @@ resource "aws_sfn_state_machine" "step_function_totes" {
       "Parameters": {
         "Payload.$": "$",
         "FunctionName": "arn:aws:lambda:eu-west-2:442426868881:function:transform_lambda:$LATEST"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2,
+          "JitterStrategy": "FULL"
+        }
+      ],
+      "Next": "Load Lambda Invoke"
+    },
+    "Load Lambda Invoke": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "OutputPath": "$.Payload",
+      "Parameters": {
+        "Payload.$": "$",
+        "FunctionName": "arn:aws:lambda:eu-west-2:442426868881:function:load_lambda:$LATEST"
       },
       "Retry": [
         {
