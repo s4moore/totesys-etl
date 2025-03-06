@@ -25,5 +25,5 @@ resource "aws_cloudwatch_log_metric_filter" "metricFilterResource_2" {
       namespace = "Totes/Errors"
       value = "1"
     }
-  
+    depends_on = [ module.lambda_function_2 ]
 }
