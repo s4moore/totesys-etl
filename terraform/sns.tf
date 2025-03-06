@@ -2,13 +2,13 @@ variable "EMAIL" {
   type = string
 }
 
-# injest lambda sns
-resource "aws_sns_topic" "injest_lambda" {
-  name = "injest_lambda_topic"
+# ingest lambda sns
+resource "aws_sns_topic" "ingest_lambda" {
+  name = "ingest_lambda_topic"
 }
 
-resource "aws_sns_topic_subscription" "injest_lambda_sub" {
-  topic_arn = aws_sns_topic.injest_lambda.arn
+resource "aws_sns_topic_subscription" "ingest_lambda_sub" {
+  topic_arn = aws_sns_topic.ingest_lambda.arn
   protocol  = "email"
   endpoint  = var.EMAIL
 }

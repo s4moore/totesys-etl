@@ -17,7 +17,7 @@ resource "aws_sfn_state_machine" "step_function_totes" {
       "OutputPath": "$.Payload",
       "Parameters": {
         "Payload.$": "$",
-        "FunctionName": "arn:aws:lambda:eu-west-2:442426868881:function:injest_lambda:$LATEST"
+        "FunctionName": "arn:aws:lambda:eu-west-2:442426868881:function:ingest_lambda:$LATEST"
       },
       "Retry": [
         {
@@ -116,7 +116,7 @@ resource "aws_iam_policy" "step_func_policy" {
                 "lambda:InvokeFunction"
             ],
             "Resource": [
-                "arn:aws:lambda:eu-west-2:442426868881:function:injest_lambda:*",
+                "arn:aws:lambda:eu-west-2:442426868881:function:ingest_lambda:*",
                 "arn:aws:lambda:eu-west-2:442426868881:function:transform_lambda:*"
             ]
         },
@@ -126,7 +126,7 @@ resource "aws_iam_policy" "step_func_policy" {
                 "lambda:InvokeFunction"
             ],
             "Resource": [
-                "arn:aws:lambda:eu-west-2:442426868881:function:injest_lambda",
+                "arn:aws:lambda:eu-west-2:442426868881:function:ingest_lambda",
                 "arn:aws:lambda:eu-west-2:442426868881:function:transform_lambda"
             ]
         }
