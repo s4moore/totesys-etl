@@ -17,7 +17,7 @@ resource "aws_sfn_state_machine" "step_function_totes" {
       "OutputPath": "$.Payload",
       "Parameters": {
         "Payload.$": "$",
-        "FunctionName": "arn:aws:lambda:eu-west-2:442426868881:function:Ingest_lambda:$LATEST"
+        "FunctionName": "arn:aws:lambda:eu-west-2:442426868881:function:ingest_lambda:$LATEST"
       },
       "Retry": [
         {
