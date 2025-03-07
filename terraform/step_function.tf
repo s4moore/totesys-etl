@@ -9,15 +9,15 @@ resource "aws_sfn_state_machine" "step_function_totes" {
 {
   "QueryLanguage": "JSONPath",
   "Comment": "A description of my state machine",
-  "StartAt": "Injest Lambda Invoke",
+  "StartAt": "Ingest Lambda Invoke",
   "States": {
-    "Injest Lambda Invoke": {
+    "Ingest Lambda Invoke": {
       "Type": "Task",
       "Resource": "arn:aws:states:::lambda:invoke",
       "OutputPath": "$.Payload",
       "Parameters": {
         "Payload.$": "$",
-        "FunctionName": "arn:aws:lambda:eu-west-2:442426868881:function:injest_lambda:$LATEST"
+        "FunctionName": "arn:aws:lambda:eu-west-2:442426868881:function:Ingest_lambda:$LATEST"
       },
       "Retry": [
         {
