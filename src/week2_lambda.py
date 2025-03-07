@@ -59,7 +59,7 @@ def lambda_handler(event, context):
         s3 = boto3.client("s3")
         # create parquet_files_written dict
         parquet_files_written = {}
-        # for table in parquet_files_written:
+        # for table in pkl_files_written:
         for table in pkl_files_written:
             match table:
                 case "sales_order":
@@ -67,7 +67,7 @@ def lambda_handler(event, context):
                     sales_df = tranform_file_into_df(pkl_files_written[table], data_bucket)
                     fact_sales = fact_sales_order(sales_df)
                     pq_dict = load_df_to_s3(fact_sales, bucket_name, db_name, "fact_sales_order")
-                    parquet_files_written.update(pq_dict)
+                    parquet_files_written["fact_sales_order"] = pq_dict["paths"][0]
                     logging.info(
                         f"{pkl_files_written[table]} transformed into {pq_dict}"
                     )
@@ -77,7 +77,7 @@ def lambda_handler(event, context):
                     dept_df = tranform_file_into_df(pkl_files_written["department"], data_bucket)
                     dim_staff = create_dim_staff(staff_df, dept_df)
                     pq_dict = load_df_to_s3(dim_staff, bucket_name, db_name, "dim_staff")
-                    parquet_files_written.update(pq_dict)
+                    parquet_files_written["dim_staff"] = pq_dict["paths"][0]
                     logging.info(
                         f"{pkl_files_written[table]} transformed into {pq_dict}"
                     )
@@ -86,7 +86,7 @@ def lambda_handler(event, context):
                     address_df = tranform_file_into_df(pkl_files_written[table], data_bucket)
                     dim_loc_df = dim_location(address_df)
                     pq_dict = load_df_to_s3(dim_loc_df, bucket_name, db_name, "dim_location")
-                    parquet_files_written.update(pq_dict)
+                    parquet_files_written["dim_location"] = pq_dict["paths"][0]
                     logging.info(
                         f"{pkl_files_written[table]} transformed into {pq_dict}"
                     )
@@ -95,7 +95,7 @@ def lambda_handler(event, context):
                     design_df = tranform_file_into_df(pkl_files_written[table], data_bucket)
                     dim_design_df = dim_design(design_df)
                     pq_dict = load_df_to_s3(dim_design_df, bucket_name, db_name,"dim_design")
-                    parquet_files_written.update(pq_dict)
+                    parquet_files_written["dim_design"] = pq_dict["paths"][0]
                     logging.info(
                         f"{pkl_files_written[table]} transformed into {pq_dict}"
                     )
@@ -104,7 +104,7 @@ def lambda_handler(event, context):
                    currency_df = tranform_file_into_df(pkl_files_written[table], data_bucket)
                    dim_currency_df = dim_currency(currency_df)
                    pq_dict = load_df_to_s3(dim_currency_df,bucket_name, db_name,"dim_currency")
-                   parquet_files_written.update(pq_dict)
+                   parquet_files_written["dim_currency"] = pq_dict["paths"][0]
                    logging.info(
                        f"{pkl_files_written[table]} transformed into {pq_dict}"
                    )
@@ -114,7 +114,7 @@ def lambda_handler(event, context):
                     address_df = tranform_file_into_df(pkl_files_written["address"], data_bucket)
                     dim_counter_df = dim_counterparty(counter_df, address_df)
                     pq_dict = load_df_to_s3(dim_counter_df, bucket_name, db_name,"dim_counterparty")
-                    parquet_files_written.update(pq_dict)
+                    parquet_files_written["dim_counterparty"] = pq_dict["paths"][0]
                     logging.info(
                         f"{pkl_files_written[table]} transformed into {pq_dict}"
                     )
@@ -125,8 +125,9 @@ def lambda_handler(event, context):
             logging.info("creating dim_date")
             dim_date_df = dim_date()
             pq_dict = load_df_to_s3(dim_date_df, bucket_name, db_name,"dim_date")
-            parquet_files_written.update(pq_dict)
+            parquet_files_written["dim_date"] = pq_dict["paths"][0]
             logging.info(f"{pq_dict} written to bucket")
+
         return {"response": 200, "parquet_files_written": parquet_files_written}
 
     except Exception as e:
