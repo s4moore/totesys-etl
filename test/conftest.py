@@ -5,6 +5,7 @@ from datetime import datetime
 import pandas as pd
 from moto import mock_aws
 from layer import db_connection
+from io import BytesIO
 
 
 @pytest.fixture(scope="function")
@@ -44,23 +45,32 @@ def conn_fixture():
 @pytest.fixture(scope="function")
 def test_df():
     test_rows = [
-        [True, datetime(2022, 11, 3, 14, 20, 51, 563000)],
-        [True, datetime(2023, 11, 3, 14, 20, 51, 563000)],
+        [True, datetime(2022, 11, 3, 14, 20, 51, 563000), 1, datetime(2022, 11, 3, 14, 20, 51, 563000), 1, 1, 1, 1.00, "USD", 1, datetime(2022, 11, 3, 14, 20, 51, 563000), datetime(2022, 11, 3, 14, 20, 51, 563000), 1],
+        [True, datetime(2023, 11, 3, 14, 20, 51, 563000), 2, datetime(2023, 11, 3, 14, 20, 51, 563000), 1, 1, 1, 1.00, "USD", 1, datetime(2022, 11, 3, 14, 20, 51, 563000), datetime(2022, 11, 3, 14, 20, 51, 563000), 1],
     ]
-    test_columns = ["column1", "last_updated"]
+    test_columns = ["column1", "last_updated", "sales_order_id", "created_at", 'staff_id', 'counterparty_id', 'units_sold', 'unit_price', 'currency_id', 'design_id', 'agreed_payment_date', 'agreed_delivery_date', 'agreed_delivery_location_id']
     return pd.DataFrame(test_rows, columns=test_columns)
 
 @pytest.fixture
-def mock_aws_with_bucket_and_glue(mocked_aws):
+def mock_aws_with_buckets_and_glue(mocked_aws, test_df):
     s3 = boto3.client("s3")
-    test_bucket = "nc-terraformers-ingestion-123"
+    test_bucket_data = "terrific-totes-data-team-11"
     s3.create_bucket(
-        Bucket=test_bucket,
+        Bucket=test_bucket_data,
+        CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
+    )
+    pickle_file = BytesIO()
+    test_df.to_pickle(pickle_file)
+
+    s3.put_object(Bucket=test_bucket_data, Key="2025-03-05/12:25:10.410000/sales_order.pkl", Body=pickle_file.getvalue())
+    test_bucket_processed = "totes-11-processed-data"
+    s3.create_bucket(
+        Bucket=test_bucket_processed,
         CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
     )
     glue = boto3.client('glue')
     glue.create_database(
-        DatabaseInput = {'Name': 'test_db'}
+        DatabaseInput = {'Name': 'load_db'}
     )
     yield s3, glue
     
