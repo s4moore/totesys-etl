@@ -42,10 +42,10 @@ def fact_sales_order(sales_df):
     try:
         output_df = pd.DataFrame()
         output_df["sales_order_id"] = sales_df["sales_order_id"]
-        output_df["created_date"] = sales_df["created_at"].dt.strftime("%Y-%m-%d") 
-        output_df["created_time"] = sales_df["created_at"].dt.strftime("%H:%M:%S")
-        output_df["last_updated_date"] = sales_df["last_updated"].dt.strftime("%Y-%m-%d") 
-        output_df["last_updated_time"] = sales_df["last_updated"].dt.strftime("%H:%M:%S")
+        output_df['created_date'] = pd.to_datetime(sales_df['created_at']).dt.date
+        output_df['created_time'] = pd.to_datetime(sales_df['created_at']).dt.strftime('%H:%M:%S')
+        output_df['last_updated_date'] = pd.to_datetime(sales_df['last_updated']).dt.date
+        output_df['last_updated_time'] = pd.to_datetime(sales_df['last_updated']).dt.strftime('%H:%M:%S')
         output_df["sales_staff_id"] = sales_df["staff_id"]
         output_df["counterparty_id"] = sales_df["counterparty_id"]
         output_df["units_sold"] = sales_df["units_sold"]

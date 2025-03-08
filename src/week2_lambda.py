@@ -128,7 +128,8 @@ def lambda_handler(event, context):
             parquet_files_written["dim_date"] = pq_dict["paths"][0]
             logging.info(f"{pq_dict} written to bucket")
 
-        return {"response": 200, "parquet_files_written": parquet_files_written}
+        return {"response": 200, "parquet_files_written": parquet_files_written,
+                'tables_written': [k for k, _ in parquet_files_written.items()]}
 
     except Exception as e:
         logging.error(f"Error running transform Lambda: {e}")
