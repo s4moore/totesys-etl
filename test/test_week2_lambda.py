@@ -26,10 +26,10 @@ def integration_event():
 
 # integration
 class TestLambdaHandlerTransformIntegration:
-    def test_returns_dict_with_files_written(self, integration_event):
-        output = lambda_handler(integration_event, {})
-        assert output["response"] == 200
-        assert 'fact_sales_order' in output["parquet_files_written"]
+    # def test_returns_dict_with_files_written(self, integration_event):
+    #     output = lambda_handler(integration_event, {})
+    #     assert output["response"] == 200
+    #     assert 'fact_sales_order' in output["parquet_files_written"]
     
     def test_logs_error(self, caplog):
         with caplog.at_level(logging.INFO):

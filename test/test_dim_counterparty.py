@@ -156,7 +156,7 @@ class TestDimCounterparty:
             "9621 880720",
         ]
 
-    def test_function_handles_no_df_error(self, test_df1, test_df2):
+    def test_function_handles_no_df_error(self, address_df, counterparty_df):
         with LogCapture() as log:
             output = dim_counterparty("", "")
             assert output == {"result": "Failure"}
@@ -164,19 +164,19 @@ class TestDimCounterparty:
             assert "Given parameter should be a DataFrame." in str(log)
 
         with LogCapture() as log:
-            output = dim_counterparty(test_df1, "")
+            output = dim_counterparty(address_df, "")
             assert output == {"result": "Failure"}
             assert "ERROR" in str(log)
             assert "Given parameter should be a DataFrame." in str(log)
 
         with LogCapture() as log:
-            output = dim_counterparty("", test_df2)
+            output = dim_counterparty("", counterparty_df)
             assert output == {"result": "Failure"}
             assert "ERROR" in str(log)
             assert "Given parameter should be a DataFrame." in str(log)
 
-    def test_function_handles_dfs_with_invalid_columns_error(self, test_df1, test_df2):
+    def test_function_handles_dfs_with_invalid_columns_error(self, address_df, counterparty_df):
         with LogCapture() as log:
-            output = dim_counterparty(test_df1, test_df2)
+            output = dim_counterparty(address_df, counterparty_df)
             assert output == {"result": "Failure"}
             assert "ERROR" in str(log)

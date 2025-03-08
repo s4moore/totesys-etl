@@ -115,8 +115,8 @@ class TestDimLocation:
             assert "ERROR" in str(log)
             assert "Given paramater should be a DataFrame." in str(log)
 
-    def test_function_handles_df_with_invalid_columns_error(self, test_df1):
+    def test_function_handles_df_with_invalid_columns_error(self, test_df):
         with LogCapture() as log:
-            output = dim_location(test_df1)
+            output = dim_location(test_df)
             assert output == {"result": "Failure"}
             assert "ERROR" in str(log)
