@@ -29,6 +29,6 @@ class TestFactSalesOrder:
 
     def test_function_handles_df_with_invalid_columns_error(self, test_df):
         with LogCapture() as log:
-            test_df = test_df.drop('last_updated', axis=1)
+            test_df = test_df.drop("last_updated", axis=1)
             fact_sales_order(test_df)
             assert "ERROR" in str(log)

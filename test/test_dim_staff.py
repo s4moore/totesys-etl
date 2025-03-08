@@ -1,7 +1,6 @@
 from layer2 import create_dim_staff
 from testfixtures import LogCapture
 import pandas as pd
-import pytest
 
 
 class TestStaff:
