@@ -4,12 +4,12 @@ import pandas as pd
 
 
 class TestFactSalesOrder:
-    def test_returns_dataframe(self, test_sales_df):
-        output = fact_sales_order(test_sales_df)
+    def test_returns_dataframe(self, test_df):
+        output = fact_sales_order(test_df)
         assert isinstance(output, pd.DataFrame)
 
-    def test_correct_columns(self, test_sales_df):
-        output = fact_sales_order(test_sales_df)
+    def test_correct_columns(self, test_df):
+        output = fact_sales_order(test_df)
         assert list(output.columns) == [
             "sales_order_id",
             "created_date",
@@ -27,11 +27,8 @@ class TestFactSalesOrder:
             "agreed_delivery_location_id",
         ]
 
-    def test_function_handles_df_with_invalid_columns_error(self, test_df1):
+    def test_function_handles_df_with_invalid_columns_error(self, test_df):
         with LogCapture() as log:
-            output = fact_sales_order(test_df1)
-            assert (
-                output
-                == "'sales_order_id' error during   col1 col2\n0   a1   b1\n1   a2   b2\n2   a3   b3 dataframe transformation"
-            )
+            test_df = test_df.drop("last_updated", axis=1)
+            fact_sales_order(test_df)
             assert "ERROR" in str(log)

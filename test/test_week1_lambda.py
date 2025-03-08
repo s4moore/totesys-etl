@@ -21,6 +21,7 @@ from layer import (
 )
 from pg8000.native import Connection
 
+
 @pytest.fixture(scope="function")
 def test_staff_df():
     rows = [
@@ -182,7 +183,7 @@ class TestWriteToS3:
         with LogCapture() as log:
             output = write_to_s3(
                 s3, "non-existant-bucket", "test-file", "pkl", data
-            )
+                )
             assert output["result"] == "Failure"
             assert (
                 "root ERROR\n  An error occurred (NoSuchBucket) when "
@@ -197,10 +198,13 @@ class TestWriteToS3:
         with LogCapture() as log:
             output = write_to_s3(s3, "test-bucket", "test-file", "pkl", data)
             assert output["result"] == "Failure"
-            assert "root ERROR\n  Parameter validation failed:\nInvalid " +\
-                "type for parameter Body, value: True, type: <class " +\
-                "'bool'>, valid types: <class 'bytes'>, <class " +\
-                "'bytearray'>, file-like object" in str(log)
+            assert (
+                "root ERROR\n  Parameter validation failed:\nInvalid "
+                + "type for parameter Body, value: True, type: <class "
+                + "'bool'>, valid types: <class 'bytes'>, <class "
+                + "'bytearray'>, file-like object"
+                in str(log)
+            )
 
 
 class TestTimeStamp:
@@ -216,7 +220,7 @@ class TestGetNewRows:
         conn = db_connection()
         output = get_new_rows(
             conn, "staff", "2013-11-14 10:19:09.990000", test_tables
-        )
+            )
         assert isinstance(output, list)
         for item in output:
             assert isinstance(item, list)
@@ -226,10 +230,11 @@ class TestGetNewRows:
         with LogCapture() as log:
             output = get_new_rows(
                 conn, "staff", "incorrect timestamp", test_tables
-            )
+                )
             assert (
                 "{'S': 'ERROR', 'V': 'ERROR', 'C': '22007', 'M': "
-                "'invalid value \"inco\"") in str(log)
+                '\'invalid value "inco"'
+            ) in str(log)
         assert output == []
 
     def test_returns_data_after_timestamp(self, test_tables):
@@ -285,7 +290,7 @@ class TestWriteDfToPickle:
         if len(bucket_files) >= 1:
             get_file = client.get_object(
                 Bucket=test_bucket, Key=bucket_files[0]
-            )
+                )
             assert get_file["ContentType"] == "binary/octet-stream"
 
     def test_uploads_to_s3_bucket(
@@ -296,7 +301,7 @@ class TestWriteDfToPickle:
         test_bucket = "nc-terraformers-ingestion-123"
         output = write_df_to_pickle(
             client, test_staff_df, test_name, test_bucket
-        )
+            )
         assert output == {
             "result": "Success",
             "detail": "Converted to pkl, uploaded to ingestion bucket",

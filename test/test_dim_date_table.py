@@ -1,6 +1,4 @@
-import pytest
 import pandas as pd
-from datetime import datetime
 from layer2 import dim_date
 
 
