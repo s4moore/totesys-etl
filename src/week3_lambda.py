@@ -15,8 +15,13 @@ def lambda_handler(event, context):
     Args:
         event['tables_written']:
                         The names of tables updated during transform
+                        
+    Returns:
+        None
     """
+    logger.info('Loading tables to databse')
     con = None
+    tables = None
     try:
         con = db_connection2()
         tables = event['tables_written']
@@ -34,7 +39,7 @@ def lambda_handler(event, context):
             
         for table in tables:
             
-            # Enable continuation in case of error writing any table
+            # Contiue to write remaining tables in case of any failure
             try:
                 df = wr.s3.read_parquet_table(database="load_db", table=table)
                 wr.postgresql.to_sql(
@@ -60,6 +65,7 @@ def lambda_handler(event, context):
         logger.error(f'Load: KeyError: {e}')
         
     finally:
+        logger.info(f'Updated databse with: {tables}')
         if con:
             con.close()
 
