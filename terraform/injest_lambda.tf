@@ -7,6 +7,7 @@ module "lambda_function" {
   runtime       = "python3.12"
   publish = true
   timeout = 100
+  memory_size = 3000
 
   source_path = "${path.module}/../src/week1_lambda.py" # needs path to src file here
 
