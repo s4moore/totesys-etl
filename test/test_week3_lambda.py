@@ -5,7 +5,7 @@ import logging
 from pg8000.exceptions import DatabaseError
     
 class TestLoadLambda:
-
+    
     @patch('src.week3_lambda.db_connection2')
     def test_logs_DataBaseError_for_db_connecion_error(self, mock_con, caplog):
         mock_con.side_effect = DatabaseError('Mock databse error')
