@@ -2,6 +2,7 @@ import awswrangler as wr
 from layer import db_connection2
 from pg8000.exceptions import DatabaseError
 import logging
+import pandas as pd
 
 logger = logging.getLogger(__name__)
 logger.setLevel("INFO")
@@ -43,6 +44,27 @@ def lambda_handler(event, context):
             # Contiue to write remaining tables in case of any failure
             try:
                 df = wr.s3.read_parquet_table(database="load_db", table=table)
+
+                # If table fact_sales_order, get table to check for duplicates
+                if table == 'fact_sales_order':
+                    existing_rows = wr.postgresql.read_sql_table(
+                        table=table,
+                        schema='project_team_11',
+                        con=con
+                    )
+                    existing_rows = existing_rows.drop(
+                        columns=['sales_record_id']
+                        )
+
+                    # Concatenate tables and drop duplicate rows
+                    df = pd.concat([df, existing_rows]).drop_duplicates(
+                        subset=[
+                            'sales_order_id',
+                            'last_updated_date',
+                            'last_updated_time'
+                            ]
+                    )
+
                 wr.postgresql.to_sql(
                     df=df,
                     con=con,
@@ -56,9 +78,11 @@ def lambda_handler(event, context):
                     ]
                 )
 
-            except Exception:
+            except Exception as e:
                 logger.error('Load: Exception: '
-                             f'Error writing table: {table} to database.')
+                             f'Error writing table: {table} to database.\n'
+                             f'Error detail: {e}')
+                tables.remove(table)
 
     except DatabaseError as e:
         logger.error(f'Load: DataBaseError: {e}')
