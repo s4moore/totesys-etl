@@ -35,9 +35,7 @@ def lambda_handler(event, context):
 
         # Make sure fact table is the last in queue to ensure foreign
         # keys are available
-        if 'fact_sales_order' in tables:
-            tables.remove('fact_sales_order')
-            tables.append('fact_sales_order')
+        tables = sorted(tables, lambda x: x == 'fact_sales_order')
 
         for table in tables:
 
@@ -78,14 +76,12 @@ def lambda_handler(event, context):
                     ]
                 )
 
-            except Exception as e:
-                logger.error('Load: Exception: '
+            except DatabaseError as e:
+                logger.error('Load: Database Error: '
                              f'Error writing table: {table} to database.\n'
                              f'Error detail: {e}')
                 tables.remove(table)
 
-    except DatabaseError as e:
-        logger.error(f'Load: DataBaseError: {e}')
     except KeyError as e:
         logger.error(f'Load: KeyError: {e}')
 
