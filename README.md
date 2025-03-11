@@ -25,7 +25,7 @@ Deploying via Terraform using Infrastructure as code, this project allows for in
    A second S3 bucket is created to store the processed/transformed data.
 
 6. **Python Application - Transform Lambda**  
-   This Python application processes the ingested data from the "ingestion" S3 bucket and transforms it to conform to the warehouse schema. The transformed data is then placed in the "processed" S3 bucket. The transformation is triggered via a "choice" in the step function - if new data is identified as part of the Extraction Lambda.  Status and error messages are logged to CloudWatch, with alerts configured for critical issues.
+   This Python application processes the ingested data from the "ingestion" S3 bucket and transforms it to conform to the warehouse schema. The transformed data is then placed in the "processed" S3 bucket, saved in parquet format.  The transformation is triggered via a "choice" in the step function - if new data is identified as part of the Extraction Lambda.  Status and error messages are logged to CloudWatch, with alerts configured for critical issues.
 
 7. **Python Application - Load Lambda**  
    A Python application is scheduled as part of the step function following the data transformation application to update the data warehouse with data from the "processed" S3 bucket. Status and error logs are sent to CloudWatch, with alerts for major errors to ensure smooth operation.
