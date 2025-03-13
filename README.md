@@ -83,9 +83,9 @@ To run tests, run the following commands
 
 ## Authors
 
-- [@maxMarty](https://www.github.com/maxMarty)
-- [@maxMarty](https://www.github.com/maxMarty)
-- [@maxMarty](https://www.github.com/maxMarty)
-- [@maxMarty](https://www.github.com/maxMarty)
-- [@maxMarty](https://www.github.com/maxMarty)
-- [@maxMarty](https://www.github.com/maxMarty)
+- [@Hugues](https://www.github.com/Hugues)
+- [@maxMarty](https://www.github.com/maxMarty) 
+- [@SSM-F](https://www.github.com/SSM-F)
+- [@svet-g](https://www.github.com/svet-g)
+- [@s4moore](https://www.github.com/s4moore)
+- [@valdemotch](https://www.github.com/valdemotch) 
