@@ -6,7 +6,7 @@ from testfixtures import LogCapture
 from moto import mock_aws
 from unittest import mock
 from datetime import datetime
-from week1_lambda import lambda_handler
+from extract_lambda import lambda_handler
 from layer import db_connection, get_db_creds
 from layer import (
     get_all_rows,
@@ -378,7 +378,7 @@ class TestLambdaHandler:
         assert isinstance(output["pkl_files_written"], dict)
         assert "pkl_files_written" in output.keys()
 
-    @mock.patch("week1_lambda.get_tables")
+    @mock.patch("extract_lambda.get_tables")
     def test_lambda_raise_exception_error_message(self, mock_conn):
         mock_conn.side_effect = Exception("error")
         result = lambda_handler({}, [])["response"]

@@ -1,7 +1,7 @@
 data "archive_file" "custom_layer_2" {
   type        = "zip"
   output_path = "${path.module}/../packages/layer/custom_layer_2.zip"
-  source_dir  = "${path.module}/../custom_layer_2"
+  source_dir  = "${path.module}/../layers/custom_layer_2"
 }
 
 resource "aws_lambda_layer_version" "custom_layer_2" {
@@ -14,7 +14,7 @@ resource "aws_lambda_layer_version" "custom_layer_2" {
 data "archive_file" "iso_layer" {
   type        = "zip"
   output_path = "${path.module}/../packages/layer/iso_layer.zip"
-  source_dir  = "${path.module}/../isolayer"
+  source_dir  = "${path.module}/../layers/isolayer"
 }
 
 resource "aws_lambda_layer_version" "iso_layer" {
