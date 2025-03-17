@@ -74,7 +74,7 @@ unit-test:
 
 ## Run the coverage check
 check-coverage:
-	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest --cov=src test/)
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest --cov=src/layer --cov=src/layer2 --cov=src test/ -W ignore)
 
 ## Run all checks
 run-checks: run-bandit run-flake8 unit-test check-coverage

@@ -3,13 +3,13 @@ module "lambda_function" {
 
   function_name = "ingest_lambda"
   description   = "Lambda function that ingests data from totesys database"
-  handler       = "week1_lambda.lambda_handler" # needs lambda handler here
+  handler       = "extract_lambda.lambda_handler" # needs lambda handler here
   runtime       = "python3.12"
   publish = true
   timeout = 100
   memory_size = 3000
 
-  source_path = "${path.module}/../src/week1_lambda.py" # needs path to src file here
+  source_path = "${path.module}/../src/extract_lambda.py" # needs path to src file here
 
   tags = {
     Name = "ingest_lambda"

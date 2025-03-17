@@ -3,13 +3,13 @@ module "lambda_function_2" {
 
   function_name = "transform_lambda"
   description   = "Lambda function that transforms data from extract s3"
-  handler       = "week2_lambda.lambda_handler" # needs lambda handler here
+  handler       = "transform_lambda.lambda_handler" # needs lambda handler here
   runtime       = "python3.12"
   publish = true
   timeout = 100
   memory_size = 3008
 
-  source_path = "${path.module}/../src/week2_lambda.py" # needs path to src file here
+  source_path = "${path.module}/../src/transform_lambda.py" # needs path to src file here
 
   tags = {
     Name = "transform_lambda"
