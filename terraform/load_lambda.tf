@@ -5,9 +5,9 @@ module "lambda_function_3" {
   description   = "Lambda function that transforms data from extract s3"
   handler       = "load_lambda.lambda_handler" # needs lambda handler here
   runtime       = "python3.12"
-  publish = true
-  timeout = 100
-  memory_size = 3008
+  publish       = true
+  timeout       = 100
+  memory_size   = 3008
 
   source_path = "${path.module}/../src/load_lambda.py" # needs path to src file here
 
@@ -22,30 +22,30 @@ module "lambda_function_3" {
   role_name = "lambda_role_3"
 
   policy_statements = {
-      s3_read_write = {
-        effect    = "Allow",
-        actions   = ["s3:GetObject"],
-        resources = ["${aws_s3_bucket.terrific-totes-processed.arn}/*"]
-      },
-      s3_read = {
-        effect    = "Allow",
-        actions   = ["s3:List*"],
-        resources = ["${aws_s3_bucket.terrific-totes-processed.arn}"]
-      },
-      cw_full_access = {
-        effect    = "Allow",
-        actions   = ["logs:*"],
-        resources = ["arn:aws:logs:*"],
-      },
-      glue_full_access = {
-        effect    = "Allow",
-        actions   = ["glue:*"],
-        resources = ["${aws_glue_catalog_database.load_db.arn}:*"]
-      },
-        read_secrets = {
-        effect    = "Allow",
-        actions   = ["secretsmanager:GetSecretValue"],
-        resources = ["*"]
-      }
+    s3_read_write = {
+      effect    = "Allow",
+      actions   = ["s3:GetObject"],
+      resources = ["${aws_s3_bucket.terrific-totes-processed.arn}/*"]
+    },
+    s3_read = {
+      effect    = "Allow",
+      actions   = ["s3:List*"],
+      resources = ["${aws_s3_bucket.terrific-totes-processed.arn}"]
+    },
+    cw_full_access = {
+      effect    = "Allow",
+      actions   = ["logs:*"],
+      resources = ["arn:aws:logs:*"],
+    },
+    glue_full_access = {
+      effect    = "Allow",
+      actions   = ["glue:*"],
+      resources = ["${aws_glue_catalog_database.load_db.arn}:*"]
+    },
+    read_secrets = {
+      effect    = "Allow",
+      actions   = ["secretsmanager:GetSecretValue"],
+      resources = ["*"]
     }
+  }
 }

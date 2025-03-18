@@ -8,78 +8,78 @@ resource "aws_glue_catalog_database" "load_db" {
 resource "aws_glue_catalog_table" "fact_sales_order" {
   name          = "fact_sales_order"
   database_name = aws_glue_catalog_database.load_db.name
-  table_type = "EXTERNAL_TABLE"
+  table_type    = "EXTERNAL_TABLE"
   storage_descriptor {
     location      = "s3://${aws_s3_bucket.terrific-totes-processed.bucket}/fact_sales_order"
     input_format  = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat"
     output_format = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat"
-    }
+  }
 }
 
 resource "aws_glue_catalog_table" "dim_staff" {
   name          = "dim_staff"
   database_name = aws_glue_catalog_database.load_db.name
-  table_type = "EXTERNAL_TABLE"
+  table_type    = "EXTERNAL_TABLE"
   storage_descriptor {
     location      = "s3://${aws_s3_bucket.terrific-totes-processed.bucket}/dim_staff"
     input_format  = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat"
     output_format = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat"
-    }
+  }
 }
 
 resource "aws_glue_catalog_table" "dim_location" {
   name          = "dim_location"
   database_name = aws_glue_catalog_database.load_db.name
-  table_type = "EXTERNAL_TABLE"
+  table_type    = "EXTERNAL_TABLE"
   storage_descriptor {
     location      = "s3://${aws_s3_bucket.terrific-totes-processed.bucket}/dim_location"
     input_format  = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat"
     output_format = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat"
-    }
+  }
 }
 
 resource "aws_glue_catalog_table" "dim_design" {
   name          = "dim_design"
   database_name = aws_glue_catalog_database.load_db.name
-  table_type = "EXTERNAL_TABLE"
+  table_type    = "EXTERNAL_TABLE"
   storage_descriptor {
     location      = "s3://${aws_s3_bucket.terrific-totes-processed.bucket}/dim_design"
     input_format  = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat"
     output_format = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat"
-    }
+  }
 }
 
 resource "aws_glue_catalog_table" "dim_currency" {
   name          = "dim_currency"
   database_name = aws_glue_catalog_database.load_db.name
-  table_type = "EXTERNAL_TABLE"
+  table_type    = "EXTERNAL_TABLE"
   storage_descriptor {
     location      = "s3://${aws_s3_bucket.terrific-totes-processed.bucket}/dim_currency"
     input_format  = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat"
     output_format = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat"
-    }
+  }
 }
 
-resource "aws_glue_catalog_table" "dim_counterparty"{
+resource "aws_glue_catalog_table" "dim_counterparty" {
   name          = "dim_counterparty"
   database_name = aws_glue_catalog_database.load_db.name
-  table_type = "EXTERNAL_TABLE"
+  table_type    = "EXTERNAL_TABLE"
   storage_descriptor {
     location      = "s3://${aws_s3_bucket.terrific-totes-processed.bucket}/dim_counterparty"
     input_format  = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat"
     output_format = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat"
-    }
+  }
 }
 
-resource "aws_glue_catalog_table" "dim_date"{
+resource "aws_glue_catalog_table" "dim_date" {
   name          = "dim_date"
   database_name = aws_glue_catalog_database.load_db.name
-  table_type = "EXTERNAL_TABLE"
+  table_type    = "EXTERNAL_TABLE"
   storage_descriptor {
     location      = "s3://${aws_s3_bucket.terrific-totes-processed.bucket}/dim_date"
     input_format  = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat"
     output_format = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat"
-    }
+  }
 }
 
 #parquet table for athena - if needed at a later stage

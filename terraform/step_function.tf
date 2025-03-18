@@ -134,28 +134,28 @@ resource "aws_iam_policy" "step_func_policy" {
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "lambda:InvokeFunction"
-            ],
-            "Resource": [
-                "arn:aws:lambda:eu-west-2:140023386627:function:ingest_lambda:*",
-                "arn:aws:lambda:eu-west-2:140023386627:function:transform_lambda:*",
-                "arn:aws:lambda:eu-west-2:140023386627:function:load_lambda:*"
-            ]
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "lambda:InvokeFunction"
-            ],
-            "Resource": [
-                "arn:aws:lambda:eu-west-2:140023386627:function:ingest_lambda",
-                "arn:aws:lambda:eu-west-2:140023386627:function:transform_lambda",
-                "arn:aws:lambda:eu-west-2:140023386627:function:load_lambda"
-            ]
-        }
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "lambda:InvokeFunction"
+        ],
+        "Resource" : [
+          "arn:aws:lambda:eu-west-2:140023386627:function:ingest_lambda:*",
+          "arn:aws:lambda:eu-west-2:140023386627:function:transform_lambda:*",
+          "arn:aws:lambda:eu-west-2:140023386627:function:load_lambda:*"
+        ]
+      },
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "lambda:InvokeFunction"
+        ],
+        "Resource" : [
+          "arn:aws:lambda:eu-west-2:140023386627:function:ingest_lambda",
+          "arn:aws:lambda:eu-west-2:140023386627:function:transform_lambda",
+          "arn:aws:lambda:eu-west-2:140023386627:function:load_lambda"
+        ]
+      }
     ]
   })
 }
