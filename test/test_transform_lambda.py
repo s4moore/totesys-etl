@@ -4,6 +4,7 @@ import logging
 import boto3
 from unittest.mock import patch, MagicMock
 
+
 @pytest.fixture
 def mock_event():
     return {
