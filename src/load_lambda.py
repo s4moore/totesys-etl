@@ -1,6 +1,7 @@
 import awswrangler as wr
 from layer import db_connection2
 from pg8000.exceptions import DatabaseError
+from botocore.errorfactory import ClientError
 import logging
 import pandas as pd
 
@@ -35,7 +36,7 @@ def lambda_handler(event, context):
 
         # Make sure fact table is the last in queue to ensure foreign
         # keys are available
-        tables = sorted(tables, lambda x: x == 'fact_sales_order')
+        tables = sorted(tables, key=lambda x: x == 'fact_sales_order')
 
         for table in tables:
 
@@ -76,14 +77,23 @@ def lambda_handler(event, context):
                     ]
                 )
 
+            except ClientError as e:
+                logger.error(f'Load: ClientError: {e}')
+
+            # Log the table and detailed error message if error on any table
             except DatabaseError as e:
-                logger.error('Load: Database Error: '
+                logger.error('Load: DatabaseError: '
                              f'Error writing table: {table} to database.\n'
                              f'Error detail: {e}')
                 tables.remove(table)
 
+    except DatabaseError as e:
+        logger.error('Load: DatabaseError: Error connecting to database.\n'
+                     f'Error detail: {e}')
+
     except KeyError as e:
-        logger.error(f'Load: KeyError: {e}')
+        logger.error('Load: KeyError (Event from extract '
+                     f'Lambda is malformed): {e}')
 
     finally:
         logger.info(f'Updated databse with: {tables}')

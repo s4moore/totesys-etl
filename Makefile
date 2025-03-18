@@ -37,7 +37,6 @@ endef
 ## Build the environment requirements
 requirements: create-environment
 	$(call execute_in_env, $(PIP) install -r ./requirements.txt)
-	$(call execute_in_env, $(PIP) install -r ./requirements.txt -t dependencies/python)
 
 ################################################################################################################
 # Set Up
@@ -70,7 +69,7 @@ run-flake8:
 
 ## Run the unit tests
 unit-test:
-	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest test/ -v)
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest test/ -v -W ignore)
 
 ## Run the coverage check
 check-coverage:

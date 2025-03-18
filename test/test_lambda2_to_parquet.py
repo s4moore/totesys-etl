@@ -7,7 +7,7 @@ class TestLoadDFToS3:
         self, mock_aws_with_buckets_and_glue, test_df
     ):
         s3_client, _ = mock_aws_with_buckets_and_glue
-        test_bucket = "totes-11-processed-data"
+        test_bucket = "processed123321"
         db_name = "load_db"
         table_name = "test_table"
         load_df_to_s3(test_df, test_bucket, db_name, table_name)
@@ -22,7 +22,7 @@ class TestLoadDFToS3:
         self, mock_aws_with_buckets_and_glue, test_df
     ):
         s3_client, _ = mock_aws_with_buckets_and_glue
-        test_bucket = "totes-11-processed-data"
+        test_bucket = "processed123321"
         db_name = "load_db"
         table_name = "test_table"
         load_df_to_s3(test_df, test_bucket, db_name, table_name)
@@ -50,7 +50,7 @@ class TestLoadDFToS3:
             ):
         with caplog.at_level(logging.INFO):
 
-            test_bucket = "totes-11-processed-data"
+            test_bucket = "processed123321"
             db_name = "load_db"
             table_name = "test_table"
 

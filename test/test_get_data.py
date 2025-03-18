@@ -22,7 +22,7 @@ def mock_s3_bucket():
         for file in test_files:
             s3.put_object(Bucket=bucket_name, Key=file)
 
-        with open("./address.pkl", "rb") as f:
+        with open("./test/address.pkl", "rb") as f:
             body = f
             s3.put_object(Bucket=bucket_name, Key="address.pkl", Body=body)
 

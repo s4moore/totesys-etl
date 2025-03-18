@@ -14,8 +14,8 @@ logger = logging.getLogger()
 logger.setLevel("INFO")
 
 db_name = "load_db"
-data_bucket = "terrific-totes-data-team-11"
-bucket_name = "totes-11-processed-data"
+data_bucket = "ingest123"
+bucket_name = "processed123321"
 
 
 def lambda_handler(event, context):

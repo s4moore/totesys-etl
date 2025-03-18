@@ -17,7 +17,7 @@ resource "aws_sfn_state_machine" "step_function_totes" {
       "OutputPath": "$.Payload",
       "Parameters": {
         "Payload.$": "$",
-        "FunctionName": "arn:aws:lambda:eu-west-2:442426868881:function:ingest_lambda:$LATEST"
+        "FunctionName": "arn:aws:lambda:eu-west-2:140023386627:function:ingest_lambda:$LATEST"
       },
       "Retry": [
         {
@@ -56,7 +56,7 @@ resource "aws_sfn_state_machine" "step_function_totes" {
       "OutputPath": "$.Payload",
       "Parameters": {
         "Payload.$": "$",
-        "FunctionName": "arn:aws:lambda:eu-west-2:442426868881:function:transform_lambda:$LATEST"
+        "FunctionName": "arn:aws:lambda:eu-west-2:140023386627:function:transform_lambda:$LATEST"
       },
       "Retry": [
         {
@@ -80,7 +80,7 @@ resource "aws_sfn_state_machine" "step_function_totes" {
       "OutputPath": "$.Payload",
       "Parameters": {
         "Payload.$": "$",
-        "FunctionName": "arn:aws:lambda:eu-west-2:442426868881:function:load_lambda:$LATEST"
+        "FunctionName": "arn:aws:lambda:eu-west-2:140023386627:function:load_lambda:$LATEST"
       },
       "Retry": [
         {
@@ -140,9 +140,9 @@ resource "aws_iam_policy" "step_func_policy" {
                 "lambda:InvokeFunction"
             ],
             "Resource": [
-                "arn:aws:lambda:eu-west-2:442426868881:function:ingest_lambda:*",
-                "arn:aws:lambda:eu-west-2:442426868881:function:transform_lambda:*",
-                "arn:aws:lambda:eu-west-2:442426868881:function:load_lambda:*"
+                "arn:aws:lambda:eu-west-2:140023386627:function:ingest_lambda:*",
+                "arn:aws:lambda:eu-west-2:140023386627:function:transform_lambda:*",
+                "arn:aws:lambda:eu-west-2:140023386627:function:load_lambda:*"
             ]
         },
         {
@@ -151,9 +151,9 @@ resource "aws_iam_policy" "step_func_policy" {
                 "lambda:InvokeFunction"
             ],
             "Resource": [
-                "arn:aws:lambda:eu-west-2:442426868881:function:ingest_lambda",
-                "arn:aws:lambda:eu-west-2:442426868881:function:transform_lambda",
-                "arn:aws:lambda:eu-west-2:442426868881:function:load_lambda"
+                "arn:aws:lambda:eu-west-2:140023386627:function:ingest_lambda",
+                "arn:aws:lambda:eu-west-2:140023386627:function:transform_lambda",
+                "arn:aws:lambda:eu-west-2:140023386627:function:load_lambda"
             ]
         }
     ]

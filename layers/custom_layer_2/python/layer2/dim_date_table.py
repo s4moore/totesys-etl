@@ -19,7 +19,7 @@ def dim_date(start="2000-01-01", end="2025-12-31"):
     return df
 
 def check_for_dim_date(s3):
-    response = s3.list_objects_v2(Bucket='totes-11-processed-data')
+    response = s3.list_objects_v2(Bucket='processed123321')
     list_of_files = [thing['Key'] for thing in response['Contents']]
     isinlist = False
     for filename in list_of_files:
