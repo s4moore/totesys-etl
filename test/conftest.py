@@ -98,7 +98,7 @@ def test_df():
 @pytest.fixture
 def mock_aws_with_buckets_and_glue(mocked_aws, test_df):
     s3 = boto3.client("s3")
-    test_bucket_data = "terrific-totes-data-team-11"
+    test_bucket_data = "ingest123"
     s3.create_bucket(
         Bucket=test_bucket_data,
         CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
@@ -111,7 +111,7 @@ def mock_aws_with_buckets_and_glue(mocked_aws, test_df):
         Key="2025-03-05/12:25:10.410000/sales_order.pkl",
         Body=pickle_file.getvalue(),
     )
-    test_bucket_processed = "totes-11-processed-data"
+    test_bucket_processed = "processed123321"
     s3.create_bucket(
         Bucket=test_bucket_processed,
         CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},

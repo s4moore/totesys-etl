@@ -2,7 +2,7 @@ from src.transform_lambda import lambda_handler
 import pytest
 import logging
 import boto3
-
+from unittest.mock import patch, MagicMock
 
 @pytest.fixture
 def mock_event():
@@ -43,7 +43,7 @@ class TestLambdaHandlerTransformIntegration:
         s3 = boto3.client("s3")
         lambda_handler(integration_event, {})
         response = s3.list_objects_v2(
-            Bucket="totes-11-processed-data").get("Contents")
+            Bucket="processed123321").get("Contents")
         bucket_files = [file["Key"] for file in response]
         for file in bucket_files:
             assert ".parquet" in file
@@ -56,7 +56,7 @@ class TestLambdaHandlerTransformMocking:
             ):
         s3, glue = mock_aws_with_buckets_and_glue
         lambda_handler(mock_event, {})
-        response = s3.list_objects_v2(Bucket="totes-11-processed-data")
+        response = s3.list_objects_v2(Bucket="processed123321")
         tables_written = [
             file["Key"].split("/")[0] for file in response["Contents"]
             ]
@@ -76,3 +76,55 @@ class TestLambdaHandlerTransformMocking:
         with caplog.at_level(logging.ERROR):
             lambda_handler(mock_event, {})
         assert "Error running transform Lambda:" in caplog.text
+
+    @patch("src.transform_lambda.tranform_file_into_df")
+    @patch("src.transform_lambda.check_for_dim_date")
+    @patch("src.transform_lambda.create_dim_staff")
+    @patch("src.transform_lambda.dim_location")
+    @patch("src.transform_lambda.dim_design")
+    @patch("src.transform_lambda.dim_currency")
+    @patch("src.transform_lambda.dim_counterparty")
+    @patch("src.transform_lambda.load_df_to_s3")
+    def test_loads_all_tables_to_s3(
+        self,
+        mock_load,
+        mock_counterparty,
+        mock_currency,
+        mock_design,
+        mock_location,
+        mock_staff,
+        mock_check_dim_date,
+        mock_transform,
+        mock_aws_with_buckets_and_glue,
+    ):
+        mock_check_dim_date.return_value = True
+        mock_transform.return_value = MagicMock()
+        mock_staff.return_value = MagicMock()
+        mock_location.return_value = MagicMock()
+        mock_design.return_value = MagicMock()
+        mock_currency.return_value = MagicMock()
+        mock_counterparty.return_value = MagicMock()
+        mock_load.return_value = MagicMock()
+
+        event = {
+            "response": 200,
+            "pkl_files_written": {
+                "staff": "pkl_file_1.pkl",
+                "counterparty": "pkl_file_2.pkl",
+                "currency": "pkl_file_3.pkl",
+                "address": "pkl_file_4.pkl",
+                "design": "pkl_file_5.pkl",
+                "department": "pkl_file_6.pkl",
+            },
+            "triggerLambda": True,
+        }
+
+        output = lambda_handler(event, {})
+
+        assert output["tables_written"] == [
+            "dim_staff",
+            "dim_counterparty",
+            "dim_currency",
+            "dim_location",
+            "dim_design",
+        ]

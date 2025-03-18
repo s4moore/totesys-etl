@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "terrific-totes-data" {
-    bucket = "terrific-totes-data-team-11"
+    bucket = "ingest123"
     tags = {
         Name = "Terrific Totes bucket"
     }

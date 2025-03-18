@@ -40,7 +40,7 @@ module "lambda_function_3" {
       glue_full_access = {
         effect    = "Allow",
         actions   = ["glue:*"],
-        resources = ["arn:aws:glue:eu-west-2:442426868881:*"]
+        resources = ["${aws_glue_catalog_database.load_db.arn}:*"]
       },
         read_secrets = {
         effect    = "Allow",

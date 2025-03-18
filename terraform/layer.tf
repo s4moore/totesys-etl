@@ -1,7 +1,7 @@
 data "archive_file" "layer" {
   type        = "zip"
   output_path = "${path.module}/../packages/layer/layer.zip"
-  source_dir  = "${path.module}/../layer"
+  source_dir  = "${path.module}/../layers/layer"
 }
 
 resource "aws_lambda_layer_version" "dependencies" {
@@ -14,7 +14,7 @@ resource "aws_lambda_layer_version" "dependencies" {
 data "archive_file" "custom_layer" {
   type        = "zip"
   output_path = "${path.module}/../packages/layer/custom_layer.zip"
-  source_dir  = "${path.module}/../custom_layer"
+  source_dir  = "${path.module}/../layers/custom_layer"
 }
 
 resource "aws_lambda_layer_version" "custom_layer" {

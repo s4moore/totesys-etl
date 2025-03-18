@@ -8,7 +8,7 @@ import pandas as pd
 from io import BytesIO
 from datetime import datetime
 
-bucket_name = "terrific-totes-data-team-11"
+bucket_name = "ingest123"
 
 
 def get_tables(conn):

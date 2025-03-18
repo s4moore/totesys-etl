@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "terrific-totes-processed" {
-    bucket = "totes-11-processed-data"
+    bucket = "processed123321"
     tags = {
         Name = "Terrific Totes bucket"
     }
