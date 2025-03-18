@@ -1,4 +1,4 @@
-from .lambda1_connection import db_connection, get_db_creds, db_connection2
+from .lambda1_connection import db_connection, get_db_creds
 from .lambda1_utils import (
     get_all_rows,
     get_columns,

@@ -1,5 +1,6 @@
 import awswrangler as wr
-from layer import db_connection2
+import pg8000.native
+from layer import db_connection
 from pg8000.exceptions import DatabaseError
 from botocore.errorfactory import ClientError
 import logging
@@ -9,94 +10,114 @@ logger = logging.getLogger(__name__)
 logger.setLevel("INFO")
 
 
-def lambda_handler(event, context):
-    """Load data from processed zone into database.
-
-    Reads parquet files from processed S3 bucket and store them in
-    the databse.
-
-    Args:
-        event['tables_written']:
-                        The names of tables updated during transform
-
-    Returns:
-        None
-    """
-    logger.info('Loading tables to databse')
-    con = None
-    tables = None
+def connect_to_database() -> pg8000.native.Connection:
+    """Establish a database connection."""
     try:
-        con = db_connection2()
-        tables = event['tables_written']
+        con = db_connection(secret_name="read-database")
 
-        # Set date format
-        cursor = con.cursor()
-        cursor.execute("SET datestyle = 'ISO, YMD';")
-        con.commit()
+        # Prevent conflict with date format
+        con.run("SET datestyle = 'ISO, YMD';")
 
-        # Make sure fact table is the last in queue to ensure foreign
-        # keys are available
-        tables = sorted(tables, key=lambda x: x == 'fact_sales_order')
-
-        for table in tables:
-
-            # Contiue to write remaining tables in case of any failure
-            try:
-                df = wr.s3.read_parquet_table(database="load_db", table=table)
-
-                # If table fact_sales_order, get table to check for duplicates
-                if table == 'fact_sales_order':
-                    existing_rows = wr.postgresql.read_sql_table(
-                        table=table,
-                        schema='project_team_11',
-                        con=con
-                    )
-                    existing_rows = existing_rows.drop(
-                        columns=['sales_record_id']
-                        )
-
-                    # Concatenate tables and drop duplicate rows
-                    df = pd.concat([df, existing_rows]).drop_duplicates(
-                        subset=[
-                            'sales_order_id',
-                            'last_updated_date',
-                            'last_updated_time'
-                            ]
-                    )
-
-                wr.postgresql.to_sql(
-                    df=df,
-                    con=con,
-                    schema="project_team_11",
-                    table=table,
-                    mode="append",
-                    index=True if table == 'fact_sales_order' else False,
-                    insert_conflict_columns=[
-                        f"{table.split('_', 1)[1] if table
-                            != 'fact_sales_order' else 'sales_record'}_id"
-                    ]
-                )
-
-            except ClientError as e:
-                logger.error(f'Load: ClientError: {e}')
-
-            # Log the table and detailed error message if error on any table
-            except DatabaseError as e:
-                logger.error('Load: DatabaseError: '
-                             f'Error writing table: {table} to database.\n'
-                             f'Error detail: {e}')
-                tables.remove(table)
+        return con
 
     except DatabaseError as e:
-        logger.error('Load: DatabaseError: Error connecting to database.\n'
-                     f'Error detail: {e}')
+        logger.error('DatabaseError: Failed to connect '
+                     f'to the database. Error: {e}')
+        return None
+
+
+def get_parquet_data(table: str) -> pd.DataFrame:
+    """Read Parquet data from S3."""
+    try:
+        return wr.s3.read_parquet_table(database="load_db", table=table)
+
+    except ClientError as e:
+        logger.error(f"ClientError: Failed to read {table} "
+                     f"from S3. Error: {e}")
+        return None
+
+
+def get_existing_table_data(
+            con: pg8000.native.Connection, table: str
+        ) -> pd.DataFrame:
+    """Fetch existing table data from the database."""
+    try:
+        existing_rows = wr.postgresql.read_sql_table(
+            table=table,
+            schema="project_team_11",
+            con=con
+        )
+        return existing_rows.drop(columns=["sales_record_id"])
+
+    except DatabaseError as e:
+        logger.error(f"DatabaseError: Failed to read {table} from database."
+                     f"Error: {e}")
+        return None
+
+
+def merge_and_remove_duplicates(
+            df: pd.DataFrame, existing_rows: pd.DataFrame
+        ) -> pd.DataFrame:
+    """Deduplicate and merge new data with existing fact table data."""
+    return pd.concat([df, existing_rows]).drop_duplicates(
+        subset=["sales_order_id", "last_updated_date", "last_updated_time"]
+    )
+
+
+def write_to_database(
+            con: pg8000.native.Connection, df: pd.DataFrame, table: str
+        ) -> None:
+    """Write the DataFrame to the database."""
+    try:
+        wr.postgresql.to_sql(
+            df=df,
+            con=con,
+            schema="project_team_11",
+            table=table,
+            mode="append",
+            index=True if table == "fact_sales_order" else False,
+            insert_conflict_columns=[
+                f"{table.split('_', 1)[1] if table
+                    != 'fact_sales_order' else 'sales_record'}_id"
+            ]
+        )
+
+    except DatabaseError as e:
+        logger.error(f"DatabaseError: Error writing {table} to "
+                     f"database. Error: {e}")
+
+
+def lambda_handler(event: dict, _) -> None:
+    """Lambda function entry point."""
+    logger.info("Loading tables into database")
+    con = None
+    tables = None
+
+    try:
+        con = connect_to_database()
+        if con is None:
+            return
+
+        tables = event["tables_written"]
+        sorted_tables = sorted(tables, key=lambda x: x == "fact_sales_order")
+
+        for table in sorted_tables:
+            df = get_parquet_data(table)
+            if df is None:
+                continue
+
+            if table == "fact_sales_order":
+                existing_rows = get_existing_table_data(con, table)
+                if existing_rows is not None:
+                    df = merge_and_remove_duplicates(df, existing_rows)
+
+            write_to_database(con, df, table)
 
     except KeyError as e:
-        logger.error('Load: KeyError (Event from extract '
-                     f'Lambda is malformed): {e}')
+        logger.error(f"KeyError: Malformed event input. Missing key: {e}")
 
     finally:
-        logger.info(f'Updated databse with: {tables}')
+        logger.info(f"Updated database with: {tables}")
         if con:
             con.close()
 
