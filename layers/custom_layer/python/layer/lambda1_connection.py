@@ -9,7 +9,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def get_db_creds(secret_name):
+def get_db_creds(database):
     """
     Returns dict of {username:pg_user,
     password:pg_password,
@@ -24,7 +24,7 @@ def get_db_creds(secret_name):
     logger.info("client connected")
     try:
         logger.info("getting secret")
-        get_secret_value_response = client.get_secret_value(SecretId=secret_name)
+        get_secret_value_response = client.get_secret_value(SecretId=database)
         logger.info("got secret")
 
     except ClientError as e:
@@ -34,9 +34,9 @@ def get_db_creds(secret_name):
     return json.loads(secret)
 
 
-def db_connection(secret_name="totesys-conn"):
+def db_connection(database="totesys-conn"):
     try:
-        db_creds = get_db_creds(secret_name)
+        db_creds = get_db_creds(database)
         logger.info("Retrieved db credentials from AWS secrets manager")
         conn = Connection(
             user=db_creds["username"],

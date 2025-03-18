@@ -13,7 +13,7 @@ logger.setLevel("INFO")
 def connect_to_database() -> pg8000.native.Connection:
     """Establish a database connection."""
     try:
-        con = db_connection(secret_name="read-database")
+        con = db_connection(database="read-database")
 
         # Prevent conflict with date format
         con.run("SET datestyle = 'ISO, YMD';")
@@ -23,6 +23,7 @@ def connect_to_database() -> pg8000.native.Connection:
     except DatabaseError as e:
         logger.error('DatabaseError: Failed to connect '
                      f'to the database. Error: {e}')
+
         return None
 
 
@@ -34,6 +35,7 @@ def get_parquet_data(table: str) -> pd.DataFrame:
     except ClientError as e:
         logger.error(f"ClientError: Failed to read {table} "
                      f"from S3. Error: {e}")
+
         return None
 
 
@@ -47,11 +49,13 @@ def get_existing_table_data(
             schema="project_team_11",
             con=con
         )
+
         return existing_rows.drop(columns=["sales_record_id"])
 
     except DatabaseError as e:
         logger.error(f"DatabaseError: Failed to read {table} from database."
                      f"Error: {e}")
+
         return None
 
 

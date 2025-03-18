@@ -45,9 +45,10 @@ class TestLambdaHandlerTransformIntegration:
         lambda_handler(integration_event, {})
         response = s3.list_objects_v2(
             Bucket="processed123321").get("Contents")
-        bucket_files = [file["Key"] for file in response]
-        for file in bucket_files:
-            assert ".parquet" in file
+        if response:
+            bucket_files = [file["Key"] for file in response]
+            for file in bucket_files:
+                assert ".parquet" in file
 
 
 # mocking

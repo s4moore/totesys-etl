@@ -72,7 +72,7 @@ def test_tables(conn_fixture):
 
 class TestGetDBCreds:
     def test_correct_keys_in_dict(self):
-        creds = get_db_creds()
+        creds = get_db_creds(database="totesys-conn")
         keys = list(creds.keys())
         assert "username" in keys
         assert "password" in keys
@@ -81,7 +81,7 @@ class TestGetDBCreds:
         assert "dbname" in keys
 
     def test_values_are_strings(self):
-        creds = get_db_creds()
+        creds = get_db_creds(database="totesys-conn")
         for cred in creds:
             assert isinstance(creds[cred], str)
 
