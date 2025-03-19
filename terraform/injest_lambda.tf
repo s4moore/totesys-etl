@@ -23,7 +23,7 @@ module "lambda_function" {
       source_arn = aws_cloudwatch_event_rule.every_20_min.arn
     }
   }
-
+  depends_on = [ aws_cloudwatch_event_rule.every_20_min ]
   attach_policy_statements = true
 
   role_name = "lambda_role"
